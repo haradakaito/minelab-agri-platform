@@ -61,7 +61,7 @@ if __name__ == "__main__":
         config_loader = ConfigLoader(config_path='../config/iam-config.json')
         print(config_loader.get())
     except BaseCustomError as e:
-        handler = ErrorHandler(log_file='../log/test-config_loader.log')
+        handler = ErrorHandler(log_file=f'../log/test-{os.path.splitext(__file__)[0]}.log')
         handler.handle_error(e)
 else:
     from lib.custom_error import ValidationError

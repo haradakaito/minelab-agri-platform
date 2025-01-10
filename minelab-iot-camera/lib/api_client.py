@@ -1,4 +1,6 @@
+import os
 import requests
+import json
 from botocore.awsrequest import AWSRequest
 from botocore.auth import SigV4Auth
 from botocore.credentials import Credentials
@@ -64,12 +66,12 @@ class APIClient:
         - リクエストヘッダーは、署名付きリクエストから取得する
         """
         try:
-            url = f"https://{self.api_endpoint}/{self.api_basepath}/{request_path}"        # リクエストURLを生成
-            request = self._create_signed_request(method=method, url=url, payload=payload) # 署名付きリクエストを生成
-            headers = self._get_headers(request=request)                                   # ヘッダーを設定
+            url = f"https://{self.api_endpoint}/{self.api_basepath}/{request_path}"                    # リクエストURLを生成
+            request = self._create_signed_request(method=method, url=url, payload=json.dumps(payload)) # 署名付きリクエストを生成
+            headers = self._get_headers(request=request)                                               # ヘッダーを設定
 
             # リクエストを送信
-            response = requests.request(method=method, url=url, headers=headers, data=payload, timeout=timeout)
+            response = requests.request(method=method, url=url, headers=headers, data=json.dumps(payload), timeout=timeout)
             response.raise_for_status() # ステータスコードが200番台以外の場合は例外を発生させる
             return response.text
         except requests.exceptions.HTTPError as e:
@@ -97,7 +99,7 @@ if __name__ == "__main__":
         response_text = api_client.send_request(request_path='images', method='GET')
         print(response_text)
     except BaseCustomError as e:
-        handler = ErrorHandler(log_file='../log/test-api_client.log')
+        handler = ErrorHandler(log_file=f'../log/test-{os.path.splitext(__file__)[0]}.log')
         handler.handle_error(e)
 else:
     from lib.custom_error import APIError
