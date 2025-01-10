@@ -3,12 +3,10 @@
 
 # ローカルの設定ファイル
 **/config/**
-!**/config/sample.json
 !**/config/api-config.json
 
 # ログディレクトリ
 **/log/**
-!**/log/sample.log
 
 # サンプルディレクトリ構造
 **/minelab-iot-storage/**
