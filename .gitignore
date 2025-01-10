@@ -9,7 +9,6 @@
 **/log/**
 !**/log/sample.log
 
-
 # サンプルディレクトリ構造
 **/minelab-iot-storage/**
 
