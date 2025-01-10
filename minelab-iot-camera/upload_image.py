@@ -24,9 +24,8 @@ if __name__ == "__main__":
                 'project_name': PROJECT_NAME,
                 'timestamp'   : Util.get_timestamp()
             },
-            timeout=10
+            timeout=3
         )
-        print(response_text)
     except BaseCustomError as e:
         # エラーハンドラを初期化
         handler = ErrorHandler(log_file=f'{Util.get_root_dir()}/log/{os.path.splitext(__file__)[0]}.log')
