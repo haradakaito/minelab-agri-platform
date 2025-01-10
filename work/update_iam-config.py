@@ -3,7 +3,7 @@ from lib import ConfigLoader, AESCodec, Util, BaseCustomError, ErrorHandler
 if __name__ == "__main__":
     try:
         # 設定ファイルを読み込む
-        config_loader = ConfigLoader(config_path=f'{Util.get_root_dir()}/config/iam-config.json') # IAM設定ファイル
+        config_loader = ConfigLoader(config_path=f'{Util.get_root_dir()}/config/iam-images-config.json') # IAM設定ファイル
 
         # 設定ファイルを更新
         for key in config_loader.get():
