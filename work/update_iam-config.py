@@ -17,5 +17,5 @@ if __name__ == "__main__":
         config_loader.save()
     except BaseCustomError as e:
         # エラーハンドラを初期化
-        handler = ErrorHandler(log_file_path=f'{Util.get_root_dir()}/log/update_iam-config.log')
+        handler = ErrorHandler(log_file=f'{Util.get_root_dir()}/log/update_iam-config.log')
         handler.handle_error(e)

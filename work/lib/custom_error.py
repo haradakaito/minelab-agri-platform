@@ -1,3 +1,4 @@
+import os
 import sys
 import logging
 import traceback
@@ -39,6 +40,9 @@ class ErrorHandler:
     def __init__(self, log_file: str):
         """ログファイルを指定してエラーハンドラーを初期化"""
         self.log_file = log_file
+        # log_fileのパスが存在しない場合は作成
+        if not os.path.exists(log_file):
+            os.makedirs(os.path.dirname(log_file), exist_ok=True)
         # ログ設定を追加
         logging.basicConfig(
             filename=self.log_file,
