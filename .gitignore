@@ -4,6 +4,7 @@
 # ローカルの設定ファイル
 **/config/**
 !**/config/sample.json
+!**/config/api-config.json
 
 # ログディレクトリ
 **/log/**
