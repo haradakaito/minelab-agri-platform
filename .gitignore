@@ -3,13 +3,11 @@
 
 # ローカルの設定ファイル
 **/config/**
-!**/config/
-# !**/config/sample.json
+!**/config/sample.json
 
 # ログディレクトリ
 **/log/**
-!**/log/
-# !**/log/sample.log
+!**/log/sample.log
 
 
 # サンプルディレクトリ構造
