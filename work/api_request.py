@@ -1,3 +1,4 @@
+import os
 from lib import BaseCustomError, ErrorHandler, Util
 from api_service import APIService
 
@@ -16,5 +17,5 @@ if __name__ == "__main__":
         print(response_text)
     except BaseCustomError as e:
         # エラーハンドラを初期化
-        handler = ErrorHandler(log_file=f'{Util.get_root_dir()}/log/api_request.log')
+        handler = ErrorHandler(log_file=f'{Util.get_root_dir()}/log/{os.path.splitext(__file__)[0]}.log')
         handler.handle_error(e)

@@ -1,4 +1,8 @@
+import os
 import uuid
+import socket
+import base64
+from datetime import datetime
 from pathlib import Path
 
 class Util:
@@ -20,18 +24,52 @@ class Util:
         except Exception as e:
             raise ValidationError("ルートディレクトリの取得に失敗しました") from e
 
+    @staticmethod
+    def get_device_name() -> str:
+        """デバイス名を取得する関数"""
+        try:
+            device_name = socket.gethostname()
+            return device_name
+        except Exception as e:
+            raise ValidationError("デバイス名の取得に失敗しました") from e
+
+    @staticmethod
+    def get_timestamp() -> str:
+        """タイムスタンプを取得する関数（ISO8601フォーマットに準拠）"""
+        try:
+            timestamp = datetime.now().isoformat('T', 'seconds')
+            return timestamp
+        except Exception as e:
+            raise ValidationError("タイムスタンプの取得に失敗しました") from e
+
+    @staticmethod
+    def encode_base64(data: bytes) -> str:
+        """バイナリデータをBase64エンコードする関数"""
+        try:
+            encoded_data = base64.b64encode(data).decode('utf-8')
+            return encoded_data
+        except Exception as e:
+            raise ValidationError("Base64エンコードに失敗しました") from e
+
 # 使用例
 if __name__ == "__main__":
     from custom_error import ValidationError, ErrorHandler, BaseCustomError
 
     try:
+        # MACアドレスを取得
         mac_address = Util.get_mac_address()
         print("MAC Address:", mac_address)
-
+        # ルートディレクトリを取得
         root_dir = Util.get_root_dir()
         print("Root Directory:", root_dir)
+        # タイムスタンプを取得
+        timestamp = Util.get_timestamp()
+        print("Timestamp:", timestamp)
+        # デバイス名を取得
+        device_name = Util.get_device_name()
+        print("Device Name:", device_name)
     except BaseCustomError as e:
-        handler = ErrorHandler(log_file='../log/test-util.log')
+        handler = ErrorHandler(log_file=f'../log/test-{os.path.splitext(__file__)[0]}.log')
         handler.handle_error(e)
 else:
     from lib.custom_error import ValidationError

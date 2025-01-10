@@ -78,5 +78,5 @@ if __name__ == '__main__':
     try:
         raise ValidationError("バリデーションエラーが発生しました")
     except BaseCustomError as e:
-        handler = ErrorHandler(log_file='../log/test-custom_error.log')
+        handler = ErrorHandler(log_file=f'../log/test-{os.path.splitext(__file__)[0]}.log')
         handler.handle_error(e)

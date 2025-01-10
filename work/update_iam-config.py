@@ -1,3 +1,4 @@
+import os
 from lib import ConfigLoader, AESCodec, Util, BaseCustomError, ErrorHandler
 
 if __name__ == "__main__":
@@ -17,5 +18,5 @@ if __name__ == "__main__":
         config_loader.save()
     except BaseCustomError as e:
         # エラーハンドラを初期化
-        handler = ErrorHandler(log_file=f'{Util.get_root_dir()}/log/update_iam-config.log')
+        handler = ErrorHandler(log_file=f'{Util.get_root_dir()}/log/{os.path.splitext(__file__)[0]}.log')
         handler.handle_error(e)
