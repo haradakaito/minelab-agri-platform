@@ -1,2 +1,12 @@
 # プロジェクト名
 project_name: "csi"
+
+# 送信先アドレス
+# destination_address: "172.16.14.1"
+destination_address: "8.8.8.8"
+
+# 送信間隔（秒）
+interval: 1
+
+# 送信時間（秒）
+duration: 900 # 15分

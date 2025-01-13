@@ -53,8 +53,6 @@ class Util:
 
 # 使用例
 if __name__ == "__main__":
-    from custom_error import ValidationError, ErrorHandler, BaseCustomError
-
     try:
         # MACアドレスを取得
         mac_address = Util.get_mac_address()
@@ -68,8 +66,7 @@ if __name__ == "__main__":
         # デバイス名を取得
         device_name = Util.get_device_name()
         print("Device Name:", device_name)
-    except BaseCustomError as e:
-        handler = ErrorHandler(log_file=f'../log/test-{os.path.splitext(os.path.basename(__file__))[0]}.log')
-        handler.handle_error(e)
+    except Exception as e:
+        print(e)
 else:
     from lib.custom_error import ValidationError

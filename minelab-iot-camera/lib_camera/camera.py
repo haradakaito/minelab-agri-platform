@@ -1,4 +1,3 @@
-import os
 import cv2
 
 class Camera:
@@ -25,8 +24,6 @@ class Camera:
 
 # 使用例
 if __name__ == "__main__":
-    from custom_error import ValidationError, ErrorHandler, BaseCustomError
-
     try:
         # カメラから画像を取得
         camera = Camera()
@@ -37,9 +34,8 @@ if __name__ == "__main__":
             encoded_frame = camera.encode_frame(frame)
             print("画像を取得しました")
         else:
-            raise ValidationError("画像が取得できませんでした")
-    except BaseCustomError as e:
-        handler = ErrorHandler(log_file=f'../log/test-{os.path.splitext(os.path.basename(__file__))[0]}.log')
-        handler.handle_error(e)
+            print("画像が取得できませんでした")
+    except Exception as e:
+        print(e)
 else:
-    from lib.custom_error import ValidationError
+    from lib import ValidationError

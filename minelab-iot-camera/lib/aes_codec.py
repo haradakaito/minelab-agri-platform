@@ -88,8 +88,6 @@ class AESCodec:
 
 # 使用例
 if __name__ == "__main__":
-    from custom_error import BaseCustomError, ValidationError, ErrorHandler
-
     try:
         mac_address = "00:00:00:00:00:00"
         codec = AESCodec(key=mac_address)
@@ -102,8 +100,7 @@ if __name__ == "__main__":
 
         decrypted_text = codec.decode(encrypted_data)
         print("Decrypted Text:", decrypted_text)
-    except BaseCustomError as e:
-        handler = ErrorHandler(log_file=f'../log/test-{os.path.splitext(os.path.basename(__file__))[0]}.log')
-        handler.handle_error(e)
+    except Exception as e:
+        print(e)
 else:
     from lib.custom_error import ValidationError

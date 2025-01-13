@@ -1,4 +1,3 @@
-import os
 import requests
 import json
 from botocore.awsrequest import AWSRequest
@@ -81,7 +80,6 @@ class APIClient:
 
 # 使用例
 if __name__ == "__main__":
-    from custom_error import BaseCustomError, APIError, ErrorHandler
 
     # 仮変数
 
@@ -98,8 +96,7 @@ if __name__ == "__main__":
     try:
         response_text = api_client.send_request(request_path='images', method='GET')
         print(response_text)
-    except BaseCustomError as e:
-        handler = ErrorHandler(log_file=f'../log/test-{os.path.splitext(os.path.basename(__file__))[0]}.log')
-        handler.handle_error(e)
+    except Exception as e:
+        print(e)
 else:
     from lib.custom_error import APIError
