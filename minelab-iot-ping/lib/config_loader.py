@@ -67,7 +67,7 @@ class ConfigLoader:
 if __name__ == "__main__":
     try:
         # JSON形式の設定ファイルを読み込む
-        config_loader = ConfigLoader(config_path='../config/iam-images-config.json')
+        config_loader = ConfigLoader(config_path='../config/iam-config.json')
         print(config_loader.get())
         # YAML形式の設定ファイルを読み込む
         config_loader = ConfigLoader(config_path='../config/device-config.yaml')
