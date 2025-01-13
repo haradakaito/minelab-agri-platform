@@ -66,8 +66,6 @@ class ConfigLoader:
 
 # 使用例
 if __name__ == "__main__":
-    from custom_error import BaseCustomError, ValidationError, ErrorHandler
-
     try:
         # JSON形式の設定ファイルを読み込む
         config_loader = ConfigLoader(config_path='../config/iam-images-config.json')
@@ -75,6 +73,7 @@ if __name__ == "__main__":
         # YAML形式の設定ファイルを読み込む
         config_loader = ConfigLoader(config_path='../config/device-config.yaml')
         print(config_loader.get('project_name'))
-    except BaseCustomError as e:
-        handler = ErrorHandler(log_file=f'../log/test-{os.path.splitext(os.path.basename(__file__))[0]}.log')
-        handler.handle_error(e)
+    except Exception as e:
+        print(e)
+else:
+    from lib.custom_error import ValidationError
