@@ -99,7 +99,7 @@ if __name__ == "__main__":
         response_text = api_client.send_request(request_path='images', method='GET')
         print(response_text)
     except BaseCustomError as e:
-        handler = ErrorHandler(log_file=f'../log/test-{os.path.splitext(__file__)[0]}.log')
+        handler = ErrorHandler(log_file=f'../log/test-{os.path.splitext(os.path.basename(__file__))[0]}.log')
         handler.handle_error(e)
 else:
     from lib.custom_error import APIError

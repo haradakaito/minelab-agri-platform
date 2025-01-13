@@ -103,7 +103,7 @@ if __name__ == "__main__":
         decrypted_text = codec.decode(encrypted_data)
         print("Decrypted Text:", decrypted_text)
     except BaseCustomError as e:
-        handler = ErrorHandler(log_file=f'../log/test-{os.path.splitext(__file__)[0]}.log')
+        handler = ErrorHandler(log_file=f'../log/test-{os.path.splitext(os.path.basename(__file__))[0]}.log')
         handler.handle_error(e)
 else:
     from lib.custom_error import ValidationError
