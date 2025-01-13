@@ -1,12 +1,12 @@
-from lib import APIClient, JsonLoader, AESCodec, Util, BaseCustomError
+from lib import APIClient, ConfigLoader, AESCodec, Util, BaseCustomError
 
 class APIService:
     def __init__(self):
         """APIサービスを初期化する"""
         try:
             # 設定ファイルを読み込む
-            api_config = JsonLoader(config_path=f'{Util.get_root_dir()}/config/api-config.json')        # API設定ファイル
-            iam_config = JsonLoader(config_path=f'{Util.get_root_dir()}/config/iam-images-config.json') # IAM設定ファイル
+            api_config = ConfigLoader(config_path=f'{Util.get_root_dir()}/config/api-config.json')        # API設定ファイル
+            iam_config = ConfigLoader(config_path=f'{Util.get_root_dir()}/config/iam-images-config.json') # IAM設定ファイル
         except BaseCustomError as e:
             raise e
 
