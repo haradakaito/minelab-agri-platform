@@ -3,4 +3,4 @@ cron:
   # pingを送信するスクリプトを定期実行する
   send_ping:
     schedule: */15 * * * * # 15分ごとに実行
-    command : python3 /home/pi/minelab-agri-platform/minelab-iot-ping/send_ping.py >> /home/pi/minelab-agri-platform/minelab-iot-ping/log/info-send_ping.log 2>&1
+    command : python3 /home/pi/minelab-agri-platform/minelab-iot-ping/send_ping.py >> /home/pi/minelab-agri-platform/minelab-iot-ping/log/send_ping.log 2>&1
