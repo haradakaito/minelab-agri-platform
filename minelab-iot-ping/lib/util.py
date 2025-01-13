@@ -6,6 +6,7 @@ from datetime import datetime
 from pathlib import Path
 
 class Util:
+    """ユーティリティクラス"""
     @staticmethod
     def get_mac_address() -> str:
         """MACアドレスを取得する関数"""

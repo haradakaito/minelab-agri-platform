@@ -4,7 +4,6 @@ import yaml
 
 class ConfigLoader:
     """設定ファイル（JSON/YAML）を読み込むクラス"""
-
     def __init__(self, config_path: str) -> None:
         self._config_path = config_path
         self._format = self._detect_format()
