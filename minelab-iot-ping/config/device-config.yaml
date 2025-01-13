@@ -2,13 +2,13 @@
 project_name: "csi"
 
 # 送信先アドレス
-destination_address: "8.8.8.8"
+destination: "8.8.8.8"
 
 # 送信間隔（秒）
 interval: 1
 
 # 送信時間（秒）
-duration: 900 # 15分
+duration: 10 # 15分
 
 # タイムアウト時間（秒）
 timeout: 1
