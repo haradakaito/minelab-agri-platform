@@ -1,1 +1,0 @@
-# minelab-agri-platform
