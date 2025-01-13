@@ -19,4 +19,4 @@
 **/__pycache__/**
 
 # test
-**/test/**
+**/__TEST__/**
