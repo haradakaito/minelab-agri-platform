@@ -5,7 +5,7 @@ class Camera:
         # self.cap   = cv2.VideoCapture(0, cv2.CAP_V4L2) # for Linux
         self.cap   = cv2.VideoCapture(0) # for Windows
 
-    def capture(self):
+    def capture(self) -> bytes:
         """カメラから画像を取得する関数"""
         # カメラがオープンされていない場合はNoneを返す
         if not self.cap.isOpened():
