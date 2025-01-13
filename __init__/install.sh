@@ -4,7 +4,7 @@
 SCRIPT_DIR=$(cd "$(dirname "$0")"; pwd)
 
 # YAMLファイルのパス
-CONFIG_FILE="$SCRIPT_DIR/setup-config.yaml"
+CONFIG_FILE="$SCRIPT_DIR/install-config.yaml"
 
 # device_type を取得して SPARSE_DIR に設定
 if [ -f "$CONFIG_FILE" ]; then
@@ -66,6 +66,16 @@ else
   update_repository
 fi
 
+# logディレクトリの作成
+LOG_DIR="$TARGET_DIR/$SPARSE_DIR/log"
+if [ ! -d "$LOG_DIR" ]; then
+  echo "ログディレクトリ $LOG_DIR を作成します..."
+  mkdir -p "$LOG_DIR"
+  echo "ログディレクトリを作成しました．"
+else
+  echo "ログディレクトリは既に存在します．"
+fi
+
 # pipのアップデート
 echo "pipをアップデートします..."
 pip install --upgrade pip
@@ -81,5 +91,5 @@ fi
 # cronの設定
 echo "cronの設定を行います..."
 # 30分毎にupdate_image.pyを実行
-(crontab -l ; echo "*/30 * * * * python3 $TARGET_DIR/$SPARSE_DIR/update_image.py") | crontab -  # 既存のcronに追記
+(crontab -l ; echo "*/30 * * * * python3 $TARGET_DIR/$SPARSE_DIR/update_image.py >> $LOG_DIR/update_image.log 2>&1") | crontab -
 echo "cronの設定が完了しました．"
