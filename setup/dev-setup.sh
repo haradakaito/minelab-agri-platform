@@ -3,10 +3,22 @@
 # スクリプト自身のディレクトリを取得
 SCRIPT_DIR=$(cd "$(dirname "$0")"; pwd)
 
+# YAMLファイルのパス
+CONFIG_FILE="$SCRIPT_DIR/setup-config.yaml"
+
+# device_type を取得して SPARSE_DIR に設定
+if [ -f "$CONFIG_FILE" ]; then
+  SPARSE_DIR=$(grep 'device_type:' "$CONFIG_FILE" | awk '{print $2}')
+else
+  echo "エラー: 設定ファイル $CONFIG_FILE が見つかりません。"
+  exit 1
+fi
+
+echo "SPARSE_DIR: $SPARSE_DIR"
+
 # クローン先をスクリプトのあるディレクトリに設定
 TARGET_DIR="$SCRIPT_DIR/minelab-agri-platform"
 REPO_URL="https://github.com/haradakaito/minelab-agri-platform.git"
-SPARSE_DIR="minelab-iot-camera" # スパースチェックアウトするディレクトリ
 BRANCH="main"
 
 # クローン処理関数
@@ -37,9 +49,6 @@ update_repository() {
   echo "既にディレクトリ $TARGET_DIR が存在します．更新を行います..."
   cd "$TARGET_DIR" || exit
 
-  # クリーンアップ（必要ならコメント解除）
-  # git reset --hard
-
   git pull origin "$BRANCH"
   
   if [ $? -eq 0 ]; then
@@ -56,7 +65,6 @@ if [ ! -d "$TARGET_DIR" ]; then
 else
   update_repository
 fi
-
 
 # pipのアップデート
 echo "pipをアップデートします..."

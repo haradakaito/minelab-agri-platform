@@ -1,5 +1,2 @@
 # プロジェクト名
 project_name: csi
-
-# デバイス分類
-device_type: minelab-iot-camera
