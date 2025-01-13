@@ -1,7 +1,7 @@
 import os
 from lib import BaseCustomError, ErrorHandler, ConfigLoader, Util
 from lib_camera import Camera
-from api_service import APIService
+from _api_service import APIService
 
 if __name__ == "__main__":
     try:
