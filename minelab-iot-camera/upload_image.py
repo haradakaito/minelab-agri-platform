@@ -28,5 +28,5 @@ if __name__ == "__main__":
         )
     except BaseCustomError as e:
         # エラーハンドラを初期化
-        handler = ErrorHandler(log_file=f'{Util.get_root_dir()}/log/{os.path.splitext(__file__)[0]}.log')
+        handler = ErrorHandler(log_file=f'{Util.get_root_dir()}/log/{os.path.splitext(os.path.basename(__file__))[0]}.log')
         handler.handle_error(e)

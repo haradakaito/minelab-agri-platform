@@ -39,7 +39,7 @@ if __name__ == "__main__":
         else:
             raise ValidationError("画像が取得できませんでした")
     except BaseCustomError as e:
-        handler = ErrorHandler(log_file=f'../log/test-{os.path.splitext(__file__)[0]}.log')
+        handler = ErrorHandler(log_file=f'../log/test-{os.path.splitext(os.path.basename(__file__))[0]}.log')
         handler.handle_error(e)
 else:
     from lib.custom_error import ValidationError
