@@ -4,6 +4,7 @@
 # ローカルの設定ファイル
 **/config/**
 !**/config/api-config.json
+!**/config/device-config.yaml
 
 # ログディレクトリ
 **/log/**

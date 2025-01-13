@@ -1,0 +1,5 @@
+# プロジェクト名
+project_name: "csi"
+
+# デバイス区分
+device_type: "minelab-iot-camera"
