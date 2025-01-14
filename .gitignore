@@ -1,16 +1,8 @@
 # 仮想環境
 **/.venv_agri/**
 
-# ローカルの設定ファイル
-**/config/**
-!**/config/api-config.json
-!**/config/device-config.yaml
-
 # ログディレクトリ
 **/log/**
-
-# サンプルディレクトリ構造
-**/minelab-iot-storage/**
 
 # ローカルの設定ファイル
 .python-version
@@ -18,7 +10,6 @@
 # キャッシュ
 **/__pycache__/**
 
-# test
-**/__TEST__/**
+**/__warn__/**
 
-**/__WARN__/**
+**/__dev__/**
