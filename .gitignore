@@ -2,7 +2,7 @@
 **/.venv_agri/**
 
 # ログディレクトリ
-**/log/**
+**/__dev__/log/**
 
 # ローカルの設定ファイル
 .python-version
