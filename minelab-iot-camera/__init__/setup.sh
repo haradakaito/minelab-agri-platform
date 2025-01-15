@@ -1,40 +1,72 @@
 #!/bin/bash
 
-# YAMLファイルのパス
-YAML_FILE="setup-config.yaml"
+# === 更新の実行 ===
+echo "1. システムのupdateを行います..."
+sudo apt update && sudo apt upgrade -y
+echo "システムのupdateが完了しました。"
 
-# cron設定ファイル
-TEMP_CRON_FILE="/tmp/cron_temp"
+# === python3-opencvのインストール ===
+echo "2. python3-opencvをインストールします..."
+if dpkg -l | grep -q "python3-opencv"; then
+  echo "python3-opencvはすでにインストールされています。"
+else
+  sudo apt install -y python3-opencv
+  echo "python3-opencvのインストールが完了しました。"
+fi
 
-# cronサービスの有効化と起動
-echo "cronサービスを有効化し、起動します..."
-sudo systemctl enable cron
-sudo systemctl start cron
+# === pipのupdate ===
+echo "3. pipのupdateを行います..."
+python3 -m pip install --upgrade pip
+echo "pipのupdateが完了しました。"
 
-# 既存のcronジョブをバックアップ
-echo "既存のcronジョブをバックアップしています..."
-crontab -l > $TEMP_CRON_FILE.bak 2>/dev/null
+# === requirements.txtのパッケージインストール ===
+REQUIREMENTS_PATH="/home/pi/minelab-agri-platform/minelab-iot-camera/requirements.txt"
+echo "4. requirements.txtのパッケージをインストールします..."
+if [ -f "$REQUIREMENTS_PATH" ]; then
+  pip3 install -r "$REQUIREMENTS_PATH"
+  echo "パッケージのインストールが完了しました。"
+else
+  echo "Error: $REQUIREMENTS_PATH が見つかりません。"
+  exit 1
+fi
 
-# cronジョブを追加
-echo "YAMLファイル $YAML_FILE からcronジョブを追加します..."
+# === Cronの有効化と起動確認 ===
+echo "5. Cronの有効化と起動確認を行います..."
+sudo systemctl enable cron  # 自動起動を有効化
+if systemctl is-active --quiet cron; then
+  echo "cronはすでにアクティブです。"
+else
+  echo "cronが停止しているため起動します..."
+  sudo systemctl start cron
+  echo "cronのサービスを起動しました。"
+fi
 
-# YAMLファイルから`schedule`と`command`を取得
-SCHEDULE=$(grep "schedule:" $YAML_FILE | awk '{print $2}')
-COMMAND=$(grep "command" $YAML_FILE | sed -e 's/.*command *: *//')
+# === Cron設定の追加 ===
+echo "6. Cronの設定を追加します..."
+CRON_CONFIG_PATH="/home/pi/minelab-agri-platform/minelab-iot-camera/__init__/setup-config.yaml"
+CRON_SCHEDULE=$(grep "schedule:" "$CRON_CONFIG_PATH" | awk '{print $2}')
+CRON_COMMAND=$(grep "command :" "$CRON_CONFIG_PATH" | cut -d':' -f2- | sed 's/^[[:space:]]*//')
 
-# 同じコマンドの重複を防ぐため、既存のcron設定から同じコマンドを削除
-grep -v "$COMMAND" $TEMP_CRON_FILE > "${TEMP_CRON_FILE}_new"
-mv "${TEMP_CRON_FILE}_new" $TEMP_CRON_FILE
+if [ -n "$CRON_SCHEDULE" ] && [ -n "$CRON_COMMAND" ]; then
+  CRON_JOB="$CRON_SCHEDULE $CRON_COMMAND"
+  # crontabへの追加(重複しないように一旦削除して追加)
+  (crontab -l | grep -v "$CRON_COMMAND"; echo "$CRON_JOB") | crontab -
+  echo "Cronジョブの設定を行いました: $CRON_JOB"
+else
+  echo "Error: setup-config.yaml 内のCron情報が見つかりません。"
+  exit 1
+fi
 
-# 新しいcronジョブを追加
-echo "新しいジョブを追加: $SCHEDULE $COMMAND"
-echo "$SCHEDULE $COMMAND" >> $TEMP_CRON_FILE
+# === Cron設定の確認 ===
+echo "=========================================="
+echo "現在のCronジョブ設定を確認します..."
+echo "------------------------------------------"
+crontab -l
+echo "=========================================="
 
-# crontabを更新
-crontab $TEMP_CRON_FILE
-
-echo "cronジョブを正常に追加しました。"
-
-# サービスステータスを確認
-echo "cronサービスのステータスを確認しています..."
-sudo systemctl status cron | grep "Active:"
+# === 再起動メッセージの出力 ===
+echo "=========================================="
+echo "システム更新が完了しました。"
+echo "再起動を行ってください。"
+echo "再起動コマンド: sudo reboot"
+echo "=========================================="
