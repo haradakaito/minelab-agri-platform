@@ -2,8 +2,8 @@ import cv2
 
 class Camera:
     def __init__(self):
-        # self.cap   = cv2.VideoCapture(0, cv2.CAP_V4L2) # for Linux
-        self.cap   = cv2.VideoCapture(0) # for Windows
+        self.cap   = cv2.VideoCapture(0, cv2.CAP_V4L2) # for Linux
+        # self.cap   = cv2.VideoCapture(0) # for Windows
 
     def capture(self) -> bytes:
         """カメラから画像を取得する関数"""
