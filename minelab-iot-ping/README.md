@@ -27,7 +27,7 @@ $ sudo nano /etc/dhcpcd.conf
 $ sudo reboot
 ```
 
-## 峰野研究室IoTカメラのセットアップ
+## 峰野研究室IoTPing送信機のセットアップ
 
 ```
 $ cd ~
