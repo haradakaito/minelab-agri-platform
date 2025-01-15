@@ -19,9 +19,15 @@ echo "3. pipのupdateを行います..."
 python3 -m pip install --upgrade pip
 echo "pipのupdateが完了しました。"
 
+# === 特定パッケージのアップグレード ===
+echo "4. 必要なパッケージ(pyOpenSSL, cryptography, botocore)のアップグレードを行います..."
+pip3 install --upgrade pyOpenSSL cryptography
+pip3 install --upgrade botocore
+echo "pyOpenSSL、cryptography、botocoreのアップグレードが完了しました。"
+
 # === requirements.txtのパッケージインストール ===
 REQUIREMENTS_PATH="/home/pi/minelab-agri-platform/minelab-iot-camera/requirements.txt"
-echo "4. requirements.txtのパッケージをインストールします..."
+echo "5. requirements.txtのパッケージをインストールします..."
 if [ -f "$REQUIREMENTS_PATH" ]; then
   pip3 install -r "$REQUIREMENTS_PATH"
   echo "パッケージのインストールが完了しました。"
@@ -31,7 +37,7 @@ else
 fi
 
 # === Cronの有効化と起動確認 ===
-echo "5. Cronの有効化と起動確認を行います..."
+echo "6. Cronの有効化と起動確認を行います..."
 sudo systemctl enable cron  # 自動起動を有効化
 if systemctl is-active --quiet cron; then
   echo "cronはすでにアクティブです。"
@@ -42,7 +48,7 @@ else
 fi
 
 # === Cron設定の追加 ===
-echo "6. Cronの設定を追加します..."
+echo "7. Cronの設定を追加します..."
 CRON_CONFIG_PATH="/home/pi/minelab-agri-platform/minelab-iot-camera/__init__/setup-config.yaml"
 CRON_SCHEDULE=$(grep "schedule:" "$CRON_CONFIG_PATH" | awk '{print $2}')
 CRON_COMMAND=$(grep "command :" "$CRON_CONFIG_PATH" | cut -d':' -f2- | sed 's/^[[:space:]]*//')
