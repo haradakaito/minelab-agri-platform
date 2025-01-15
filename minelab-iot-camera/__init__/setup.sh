@@ -19,15 +19,9 @@ echo "3. pipのupdateを行います..."
 python3 -m pip install --upgrade pip
 echo "pipのupdateが完了しました。"
 
-# === 特定パッケージのアップグレード ===
-echo "4. 必要なパッケージ(pyOpenSSL, cryptography, botocore)のアップグレードを行います..."
-pip3 install --upgrade pyOpenSSL cryptography
-pip3 install --upgrade botocore
-echo "pyOpenSSL、cryptography、botocoreのアップグレードが完了しました。"
-
 # === requirements.txtのパッケージインストール ===
 REQUIREMENTS_PATH="/home/pi/minelab-agri-platform/minelab-iot-camera/requirements.txt"
-echo "5. requirements.txtのパッケージをインストールします..."
+echo "4. requirements.txtのパッケージをインストールします..."
 if [ -f "$REQUIREMENTS_PATH" ]; then
   pip3 install -r "$REQUIREMENTS_PATH"
   echo "パッケージのインストールが完了しました。"
@@ -35,6 +29,12 @@ else
   echo "Error: $REQUIREMENTS_PATH が見つかりません。"
   exit 1
 fi
+
+# === 特定パッケージのアップグレード ===
+echo "5. 必要なパッケージ(pyOpenSSL, cryptography, botocore)のアップグレードを行います..."
+pip3 install --upgrade pyOpenSSL cryptography
+pip3 install --upgrade botocore
+echo "pyOpenSSL、cryptography、botocoreのアップグレードが完了しました。"
 
 # === Cronの有効化と起動確認 ===
 echo "6. Cronの有効化と起動確認を行います..."
