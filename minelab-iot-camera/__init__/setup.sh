@@ -50,14 +50,12 @@ fi
 # === Cron設定の追加 ===
 echo "7. Cronの設定を追加します..."
 CRON_CONFIG_PATH="/home/pi/minelab-agri-platform/minelab-iot-camera/__init__/setup-config.yaml"
-CRON_SCHEDULE=$(grep "schedule:" "$CRON_CONFIG_PATH" | awk '{print $2}')
-CRON_COMMAND=$(grep "command :" "$CRON_CONFIG_PATH" | cut -d':' -f2- | sed 's/^[[:space:]]*//')
+CRON_ENTRY=$(grep "upload_image:" "$CRON_CONFIG_PATH" | awk -F': ' '{print $2}' | xargs)
 
-if [ -n "$CRON_SCHEDULE" ] && [ -n "$CRON_COMMAND" ]; then
-  CRON_JOB="$CRON_SCHEDULE $CRON_COMMAND"
+if [ -n "$CRON_ENTRY" ]; then
   # crontabへの追加(重複しないように一旦削除して追加)
-  (crontab -l | grep -v "$CRON_COMMAND"; echo "$CRON_JOB") | crontab -
-  echo "Cronジョブの設定を行いました: $CRON_JOB"
+  (crontab -l | grep -v "$CRON_ENTRY"; echo "$CRON_ENTRY") | crontab -
+  echo "Cronジョブの設定を行いました: $CRON_ENTRY"
 else
   echo "Error: setup-config.yaml 内のCron情報が見つかりません。"
   exit 1
