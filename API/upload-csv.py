@@ -38,7 +38,7 @@ def lambda_handler(event, context):
         # ペイロードの検証
         if _is_valid_payload(payload=event):
 
-            # 画像保存処理
+            # CSV保存処理
             s3 = boto3.client('s3')
             csv_data = base64.b64decode(event['csv_data'])
             save_path  = _create_save_path(project_name=event['project_name'], device_name=event['device_name'], timestamp=event['timestamp'])
