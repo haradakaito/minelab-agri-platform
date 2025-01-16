@@ -10,14 +10,14 @@ BUCKET_NAME = os.environ['BUCKET_NAME']
 def _is_valid_payload(payload: dict) -> bool:
     try:
         # 必須キーの存在確認
-        required_keys = ['device_name', 'image_data', 'project_name', 'timestamp']
+        required_keys = ['device_name', 'csv_data', 'project_name', 'timestamp']
         if not all(key in payload for key in required_keys):
             return False
 
         # 型チェック
         return (
             isinstance(payload['device_name'], str) and
-            isinstance(payload['image_data'], str) and
+            isinstance(payload['csv_data'], str) and
             isinstance(payload['project_name'], str) and
             isinstance(payload['timestamp'], str)
         )
@@ -26,12 +26,12 @@ def _is_valid_payload(payload: dict) -> bool:
 
 # 保存パスの作成
 def _create_save_path(project_name: str, device_name: str, timestamp: str):
-    # YYYY-MM-DDThh:mm:ssの場合、year=YYYY/month=MM/day=DD/YYYMMDDhhmmss.jpg
+    # YYYY-MM-DDThh:mm:ssの場合、year=YYYY/month=MM/day=DD/YYYMMDDhhmmss.csv
     year      = timestamp.split('T')[0].split('-')[0]
     month     = timestamp.split('T')[0].split('-')[1]
     day       = timestamp.split('T')[0].split('-')[2]
-    file_name = timestamp.split('T')[0].replace('-', '') + timestamp.split('T')[1].replace(':', '') + '.jpg'
-    return f'projects/{project_name}/image-data/{device_name}/year={year}/month={month}/day={day}/{file_name}'
+    file_name = timestamp.split('T')[0].replace('-', '') + timestamp.split('T')[1].replace(':', '') + '.csv'
+    return f'projects/{project_name}/csv-data/{device_name}/year={year}/month={month}/day={day}/{file_name}'
 
 def lambda_handler(event, context):
     try:
@@ -40,13 +40,13 @@ def lambda_handler(event, context):
 
             # 画像保存処理
             s3 = boto3.client('s3')
-            image_data = base64.b64decode(event['image_data'])
+            csv_data = base64.b64decode(event['csv_data'])
             save_path  = _create_save_path(project_name=event['project_name'], device_name=event['device_name'], timestamp=event['timestamp'])
-            s3.put_object(Bucket=BUCKET_NAME, Key=save_path, Body=image_data)
+            s3.put_object(Bucket=BUCKET_NAME, Key=save_path, Body=csv_data)
 
             return {
                 'statusCode': 200,
-                'body': json.dumps('Image uploaded successfully.')
+                'body': json.dumps('CSV uploaded successfully.')
             }
         else:
             return {
