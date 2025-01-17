@@ -1,3 +1,4 @@
+import os
 import uuid
 import socket
 import base64
@@ -52,6 +53,15 @@ class Util:
         except Exception as e:
             raise ValidationError("Base64エンコードに失敗しました") from e
 
+    @staticmethod
+    def create_path(path: Path) -> None:
+        """指定パスを作成する関数"""
+        try:
+            if not os.path.exists(path=path):
+                os.makedirs(os.path.dirname(path), exist_ok=True)
+        except Exception as e:
+            raise ValidationError("ディレクトリの作成に失敗しました") from e
+
 # 使用例
 if __name__ == "__main__":
     try:
@@ -67,6 +77,13 @@ if __name__ == "__main__":
         # デバイス名を取得
         device_name = Util.get_device_name()
         print("Device Name:", device_name)
+        # バイナリデータをBase64エンコード
+        data = b"Hello, World!"
+        encoded_data = Util.encode_base64(data)
+        print("Encoded Data:", encoded_data)
+        # ディレクトリを作成
+        dir_path = root_dir / "data"
+        Util.create_dir(dir_path)
     except Exception as e:
         print(e)
 else:

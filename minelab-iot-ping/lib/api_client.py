@@ -80,9 +80,9 @@ class APIClient:
 
 # 使用例
 if __name__ == "__main__":
-
     # 仮変数
 
+    # APIクライアントを初期化
     api_client = APIClient(
         access_key=AWS_ACCESS_KEY,
         secret_key=AWS_SECRET_KEY,
@@ -93,6 +93,7 @@ if __name__ == "__main__":
         api_endpoint=API_ENDPOINT
     )
 
+    # APIリクエストを送信
     try:
         response_text = api_client.send_request(request_path='images', method='GET')
         print(response_text)
