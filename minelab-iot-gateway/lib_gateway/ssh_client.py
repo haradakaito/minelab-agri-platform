@@ -8,5 +8,3 @@ import fnmatch
 class SSHClient:
     def __init__(self):
         pass
-
-    

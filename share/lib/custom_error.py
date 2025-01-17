@@ -34,6 +34,12 @@ class APIError(BaseCustomError):
     def __init__(self, message: str, error_code: int = 3001):
         super().__init__(message, error_code)
 
+# バリデーションエラー
+class SSHError(BaseCustomError):
+    """バリデーションエラーを表すクラス"""
+    def __init__(self, message: str, error_code: int = 4001):
+        super().__init__(message, error_code)
+
 # エラーハンドラー
 class ErrorHandler:
     """エラーハンドリングを行うクラス"""
