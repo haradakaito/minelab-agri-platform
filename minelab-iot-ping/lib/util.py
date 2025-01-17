@@ -1,4 +1,3 @@
-import os
 import uuid
 import socket
 import base64
@@ -36,9 +35,10 @@ class Util:
 
     @staticmethod
     def get_timestamp() -> str:
-        """タイムスタンプを取得する関数（ISO8601フォーマットに準拠）"""
+        """タイムスタンプを取得する関数"""
+        # 「YYYY-MM-DDThh-mm-ss」形式で取得
         try:
-            timestamp = datetime.now().isoformat('T', 'seconds')
+            timestamp = datetime.now().strftime('%Y-%m-%dT%H-%M-%S')
             return timestamp
         except Exception as e:
             raise ValidationError("タイムスタンプの取得に失敗しました") from e
