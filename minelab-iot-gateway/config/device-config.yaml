@@ -1,2 +1,5 @@
 # プロジェクト名
 project_name: csi
+
+# 接続クライアント名
+client_list: [minelab-iot-nexmon-1]
