@@ -5,23 +5,14 @@ echo "1. システムのupdateを行います..."
 sudo apt update && sudo apt upgrade -y
 echo "システムのupdateが完了しました。"
 
-# === python3-opencvのインストール ===
-echo "2. python3-opencvをインストールします..."
-if dpkg -l | grep -q "python3-opencv"; then
-  echo "python3-opencvはすでにインストールされています。"
-else
-  sudo apt install -y python3-opencv
-  echo "python3-opencvのインストールが完了しました。"
-fi
-
 # === pipのupdate ===
-echo "3. pipのupdateを行います..."
+echo "2. pipのupdateを行います..."
 python3 -m pip install --upgrade pip
 echo "pipのupdateが完了しました。"
 
 # === requirements.txtのパッケージインストール ===
-REQUIREMENTS_PATH="/home/pi/minelab-agri-platform/minelab-iot-camera/requirements.txt"
-echo "4. requirements.txtのパッケージをインストールします..."
+REQUIREMENTS_PATH="/home/pi/minelab-agri-platform/minelab-iot-gateway/requirements.txt"
+echo "3. requirements.txtのパッケージをインストールします..."
 if [ -f "$REQUIREMENTS_PATH" ]; then
   pip3 install -r "$REQUIREMENTS_PATH"
   echo "パッケージのインストールが完了しました。"
@@ -31,13 +22,13 @@ else
 fi
 
 # === 特定パッケージのアップグレード ===
-echo "5. 必要なパッケージ(pyOpenSSL, cryptography, botocore)のアップグレードを行います..."
+echo "4. 必要なパッケージ(pyOpenSSL, cryptography, botocore)のアップグレードを行います..."
 pip3 install --upgrade pyOpenSSL cryptography
 pip3 install --upgrade botocore
 echo "pyOpenSSL、cryptography、botocoreのアップグレードが完了しました。"
 
 # === Cronの有効化と起動確認 ===
-echo "6. Cronの有効化と起動確認を行います..."
+echo "5. Cronの有効化と起動確認を行います..."
 sudo systemctl enable cron  # 自動起動を有効化
 if systemctl is-active --quiet cron; then
   echo "cronはすでにアクティブです。"
@@ -48,9 +39,9 @@ else
 fi
 
 # === Cron設定の追加 ===
-echo "7. Cronの設定を追加します..."
-CRON_CONFIG_PATH="/home/pi/minelab-agri-platform/minelab-iot-camera/__init__/setup-config.yaml"
-CRON_ENTRY=$(grep "upload_image:" "$CRON_CONFIG_PATH" | awk -F': ' '{print $2}' | xargs)
+echo "6. Cronの設定を追加します..."
+CRON_CONFIG_PATH="/home/pi/minelab-agri-platform/minelab-iot-gateway/__init__/setup-config.yaml"
+CRON_ENTRY=$(grep "upload_csv:" "$CRON_CONFIG_PATH" | awk -F': ' '{print $2}' | xargs)
 
 if [ -n "$CRON_ENTRY" ]; then
   # crontabへの追加(重複しないように一旦削除して追加)
