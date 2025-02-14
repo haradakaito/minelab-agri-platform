@@ -21,10 +21,10 @@ $ sudo reboot
 $ sudo nano /etc/dhcpcd.conf
 
 # 以下のフォーマットで末尾に張り付ける
-## interface eth0
-## static ip_address=192.168.25.3/22
-## static routers=192.168.25.1
-## static domain_name_servers=192.168.25.1
+interface eth0
+static ip_address=192.168.25.3/22
+static routers=192.168.25.1
+static domain_name_servers=192.168.25.1
 
 $ sudo reboot
 ```
