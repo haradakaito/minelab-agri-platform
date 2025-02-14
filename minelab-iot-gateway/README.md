@@ -32,6 +32,28 @@ static domain_name_servers=192.168.25.1
 $ sudo reboot
 ```
 
+## 公開鍵認証
+
+```
+$ cd ~
+$ ssh-keygen
+
+# 全て何も入力せずにエンター
+
+$ cat .ssh/id_rsa.pub
+
+# 出力された文字列をコピー
+
+# クライアントデバイスそれぞれに対してSSHを行い，以下の操作を実行
+
+$ cd ~
+$ sudo nano .ssh/authorized_keys
+
+# コピーした公開鍵を追記
+
+$ sudo reboot
+```
+
 ## 峰野研究室IoTゲートウェイのセットアップ
 
 ```
