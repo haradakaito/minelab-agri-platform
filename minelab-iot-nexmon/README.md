@@ -44,9 +44,52 @@ $ sudo reboot
 
 ```
 $ cd ~
-$ git clone https://github.com/haradakaito/minelab-agri-platform.git
-$ cd minelab-agri-platform/minelab-iot-nexmon/__init__
-$ chmod +x setup.sh
-$ bash setup.sh
+$ sudo nano /usr/local/bin/nexmon_start.sh
+
+# 以下を追記して保存
+#!/bin/bash
+# ネットワークインターフェースの起動
+ifconfig wlan0 up
+sleep 2  # インターフェースが完全に起動するまで待つ
+# Nexmon の設定
+nexutil -Iwlan0 -s500 -b -l34 -vKuMBEQAAAQAsz2cajo4AAAAAAAAAAAAAAAAAAAAAAAAAAA==
+sleep 1
+# モニターインターフェースの作成
+iw dev wlan0 interface add mon0 type monitor
+sleep 1
+# インターフェースの起動
+ip link set mon0 up
+sleep 1
+exit 0
+
+# 実行権限を追加
+$ sudo chmod +x /usr/local/bin/nexmon_start.sh
+
+$ sudo nano /etc/systemd/system/nexmon_start.service
+
+# 以下を追記して保存
+[Unit]
+Description=Nexmon Startup Script
+After=network.target
+Wants=network.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/bin/bash /usr/local/bin/nexmon_start.sh
+Restart=on-failure
+User=root
+
+[Install]
+WantedBy=multi-user.target
+
+# サービスファイルを起動・設定
+$ sudo systemctl daemon-reload
+$ sudo systemctl enable nexmon_start.service
+$ sudo systemctl start nexmon_start.service
+$ sudo systemctl status nexmon_start.service
+
+# active (exited)と表示されていれば成功
+
 $ sudo reboot
 ```
