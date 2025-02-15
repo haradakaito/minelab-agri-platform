@@ -93,3 +93,12 @@ $ sudo systemctl status nexmon_start.service
 
 $ sudo reboot
 ```
+
+```
+$ sudo crontab -e
+
+# 以下を追記して保存
+0 3 * * * find /home/pi -type f -name "*.pcap" -delete
+
+$ sudo reboot
+```
