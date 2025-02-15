@@ -52,7 +52,7 @@ $ sudo nano /usr/local/bin/nexmon_start.sh
 ifconfig wlan0 up
 sleep 2  # インターフェースが完全に起動するまで待つ
 # Nexmon の設定
-nexutil -Iwlan0 -s500 -b -l34 -vKuMBEQAAAQAsz2cajo4AAAAAAAAAAAAAAAAAAAAAAAAAAA==
+nexutil -Iwlan0 -s500 -b -l34 -v{任意のmcpによって生成されたパラメータ}
 sleep 1
 # モニターインターフェースの作成
 iw dev wlan0 interface add mon0 type monitor
