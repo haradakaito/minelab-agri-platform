@@ -1,5 +1,5 @@
 import os
-import uuid
+import netifaces
 import socket
 import base64
 from datetime import datetime
@@ -8,10 +8,10 @@ from pathlib import Path
 class Util:
     """ユーティリティクラス"""
     @staticmethod
-    def get_mac_address() -> str:
+    def get_mac_address(interface: str = "wlan0") -> str:
         """MACアドレスを取得する関数"""
         try:
-            mac_address = ':'.join(['{:02x}'.format((uuid.getnode() >> i) & 0xff) for i in range(0, 8*6, 8)][::-1])
+            mac_address = netifaces.ifaddresses(interface)[netifaces.AF_LINK][0]['addr']
             return mac_address
         except Exception as e:
             raise ValidationError("MACアドレスの取得に失敗しました") from e
