@@ -12,3 +12,6 @@ client_list: []
 
 # 参照リモートディレクトリ
 remote_path: 
+
+# nexmon実行コマンド
+exec_nexmon_cmd: 
