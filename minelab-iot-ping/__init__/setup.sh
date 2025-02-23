@@ -11,7 +11,7 @@ echo "2. pipのupdateを行います..."
 python3 -m pip install --upgrade pip
 
 # === requirements.txtのパッケージインストール ===
-REQUIREMENTS_PATH="/home/pi/minelab-agri-platform/minelab-iot-camera/requirements.txt"
+REQUIREMENTS_PATH="/home/pi/minelab-agri-platform/minelab-iot-ping/requirements.txt"
 echo "3. requirements.txtのパッケージをインストールします..."
 if [ -f "$REQUIREMENTS_PATH" ]; then
   pip3 install -r "$REQUIREMENTS_PATH"
