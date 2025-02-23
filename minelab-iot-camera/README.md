@@ -1,6 +1,6 @@
 # セットアップ手順
 
-## SSHキーによるSSH接続設定
+## （推奨）公開鍵によるSSH接続設定
 
 ```
 $ cd ~
@@ -8,17 +8,17 @@ $ sudo mkdir .ssh
 $ sudo touch ./.ssh/authorized_keys
 $ sudo nano ./.ssh/authorized_keys
 
-# 任意のSSHキーを張り付ける
+# 任意の公開鍵（.pub）を追記
 
 $ sudo reboot
 ```
 
-## IP固定
+## （推奨）IP固定
 
 ```
 $ sudo nano /etc/dhcpcd.conf
 
-# 以下のフォーマットで末尾に張り付ける
+# 以下のフォーマットで末尾に追記
 interface wlan0
 static ip_address=172.16.15.220/22
 static routers=172.16.14.1
@@ -27,7 +27,7 @@ static domain_name_servers=172.16.15.24
 $ sudo reboot
 ```
 
-## 峰野研究室IoTカメラのセットアップ
+## 初期設定用シェルスクリプトの実行
 
 ```
 $ cd ~
@@ -38,16 +38,14 @@ $ bash setup.sh
 $ sudo reboot
 ```
 
+## 設定ファイルの記入・暗号化
+
 ```
 $ cd ~/minelab-agri-platform/minelab-iot-camera/config
-$ sudo nano device-config.yaml
+$ sudo nano config.json
 
-# project_nameに任意のプロジェクト名を入力
-
-$ sudo nano iam-config.json
-
-# IAM情報（アクセスキー，シークレットキー，APIキー）を入力
+# 全てのパラメータを入力する
 
 $ cd ~/minelab-agri-platform/minelab-iot-camera
-$ python encrypt_iam-config.py
+$ python encrypt_config.py
 ```
