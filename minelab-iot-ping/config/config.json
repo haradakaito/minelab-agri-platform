@@ -1,0 +1,6 @@
+{
+    "Duration"   : "900",
+    "Destination": "8.8.8.8",
+    "Timeout"    : "1",
+    "Interval"   : "1"
+}

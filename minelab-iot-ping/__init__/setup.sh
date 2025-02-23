@@ -2,16 +2,16 @@
 
 # === 更新の実行 ===
 echo "1. システムのupdateを行います..."
-sudo apt update && sudo apt upgrade -y
+sudo apt update -y
+sudo apt upgrade -y
 echo "システムのupdateが完了しました。"
 
 # === pipのupdate ===
 echo "2. pipのupdateを行います..."
 python3 -m pip install --upgrade pip
-echo "pipのupdateが完了しました。"
 
 # === requirements.txtのパッケージインストール ===
-REQUIREMENTS_PATH="/home/pi/minelab-agri-platform/minelab-iot-ping/requirements.txt"
+REQUIREMENTS_PATH="/home/pi/minelab-agri-platform/minelab-iot-camera/requirements.txt"
 echo "3. requirements.txtのパッケージをインストールします..."
 if [ -f "$REQUIREMENTS_PATH" ]; then
   pip3 install -r "$REQUIREMENTS_PATH"
@@ -21,36 +21,42 @@ else
   exit 1
 fi
 
-# === 特定パッケージのアップグレード ===
-echo "4. 必要なパッケージ(pyOpenSSL, cryptography, botocore)のアップグレードを行います..."
-pip3 install --upgrade pyOpenSSL cryptography
-pip3 install --upgrade botocore
-echo "pyOpenSSL、cryptography、botocoreのアップグレードが完了しました。"
-
 # === Cronの有効化と起動確認 ===
-echo "5. Cronの有効化と起動確認を行います..."
+echo "4. Cronの有効化と起動確認を行います..."
 sudo systemctl enable cron  # 自動起動を有効化
-if systemctl is-active --quiet cron; then
-  echo "cronはすでにアクティブです。"
-else
+if ! systemctl is-active --quiet cron; then
   echo "cronが停止しているため起動します..."
   sudo systemctl start cron
-  echo "cronのサービスを起動しました。"
 fi
 
-# === Cron設定の追加 ===
-echo "6. Cronの設定を追加します..."
-CRON_CONFIG_PATH="/home/pi/minelab-agri-platform/minelab-iot-ping/__init__/setup-config.yaml"
-CRON_ENTRY=$(grep "send_ping:" "$CRON_CONFIG_PATH" | awk -F': ' '{print $2}' | xargs)
+echo "cronのサービスは正常に動作しています。"
 
-if [ -n "$CRON_ENTRY" ]; then
-  # crontabへの追加(重複しないように一旦削除して追加)
-  (crontab -l | grep -v "$CRON_ENTRY"; echo "$CRON_ENTRY") | crontab -
-  echo "Cronジョブの設定を行いました: $CRON_ENTRY"
-else
-  echo "Error: setup-config.yaml 内のCron情報が見つかりません。"
+# === setup-config.yaml の Cron 設定を適用 ===
+echo "5. setup-config.yaml の Cron 設定を適用します..."
+CRON_CONFIG_PATH="/home/pi/minelab-agri-platform/minelab-iot-ping/__init__/setup-config.yaml"
+
+if [ ! -f "$CRON_CONFIG_PATH" ]; then
+  echo "Error: setup-config.yaml が見つかりません。"
   exit 1
 fi
+
+# Cronジョブを取得
+SEND_PING=$(grep "send_ping:" "$CRON_CONFIG_PATH" | awk -F': ' '{print $2}' | xargs)
+
+if [ -z "$SEND_PING" ] || [ -z "$UPDATE_CONFIG" ]; then
+  echo "Error: setup-config.yaml からCron情報を正しく取得できませんでした。"
+  exit 1
+fi
+
+# 現在のcrontabをバックアップし、新しいcrontabを設定
+TMP_CRON=$(mktemp)
+crontab -l 2>/dev/null | grep -v -E "$SEND_PING|$UPDATE_CONFIG" > "$TMP_CRON"
+echo "$SEND_PING" >> "$TMP_CRON"
+echo "$UPDATE_CONFIG" >> "$TMP_CRON"
+crontab "$TMP_CRON"
+rm "$TMP_CRON"
+
+echo "Cronジョブの設定を更新しました。"
 
 # === Cron設定の確認 ===
 echo "=========================================="

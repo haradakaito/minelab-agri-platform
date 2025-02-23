@@ -1,33 +1,29 @@
 import time
-import os
+import json
 from datetime import datetime, timedelta
-from lib import BaseCustomError, ErrorHandler, ConfigLoader, Util
+from lib import ErrorHandler, Util
 from lib_ping import Ping
 
 if __name__ == '__main__':
     try:
+        # 設定ファイルを読み込む
+        with open(f"{Util.get_root_dir()}/config/config.json", "r", encoding="utf-8") as file:
+            config = json.load(file)
+
         # Pingオブジェクトの生成
         ping = Ping()
-
-        # デバイス設定の取得
-        device_config = ConfigLoader(config_path=f'{Util.get_root_dir()}/config/device-config.yaml')
-
-        # Pingを一定時間だけホストに一定間隔で送信
-        start_time = datetime.now()                                                     # 開始時間を設定
-        end_time   = start_time + timedelta(seconds=int(device_config.get('duration'))) # 終了時間を設定（開始時間 + duration秒）
-
+        # Pingを一定時間，一定間隔で送信
+        end_time = datetime.now() + timedelta(seconds=int(config["Duration"])) # 終了時間（開始時間 + Duration秒）
         while datetime.now() < end_time:
-            # Ping送信（送信先ホストは設定ファイルから取得）
+            # Ping送信
             ping.send(
-                destination = str(device_config.get('destination')), # 送信先ホスト
-                timeout     = int(device_config.get('timeout'))      # タイムアウト時間
+                destination = str(config["Destination"]), # 送信先ホスト
+                timeout     = int(config["Timeout"])      # タイムアウト時間
             )
             # インターバル時間だけ待機
-            time.sleep(int(device_config.get('interval')))
+            time.sleep(int(config["Interval"]))
 
-        # 結果を表示
-        ping.display_results()
-    except BaseCustomError as e:
+    except Exception as e:
         # エラーハンドラを初期化
-        handler = ErrorHandler(log_file=f'{Util.get_root_dir()}/log/error-{os.path.splitext(os.path.basename(__file__))[0]}.log')
+        handler = ErrorHandler(log_file=f'{Util.get_root_dir()}/log/{Util.get_exec_file_name()}.log')
         handler.handle_error(e)
