@@ -1,4 +1,3 @@
-import os
 import json
 from lib import AESCodec, Util, APIClient, ErrorHandler
 from lib_camera import Camera
