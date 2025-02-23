@@ -13,9 +13,9 @@ class AESCodec:
         try:
             return hashlib.sha256(key.encode('utf-8')).digest()
         except Exception as e:
-            raise ValidationError("AES鍵の生成に失敗しました") from e
+            raise e
 
-    def encode(self, plaintext: str) -> str:
+    def encrypt(self, plaintext: str) -> str:
         """
         AES暗号化
 
@@ -51,9 +51,9 @@ class AESCodec:
             encrypted_data = iv + ciphertext
             return encrypted_data.hex()
         except Exception as e:
-            raise ValidationError("AES暗号化に失敗しました") from e
+            raise e
 
-    def decode(self, encrypted_data: str) -> str:
+    def decrypt(self, encrypted_data: str) -> str:
         """
         AES復号
 
@@ -84,7 +84,7 @@ class AESCodec:
             plaintext = decryptor.update(ciphertext) + decryptor.finalize()
             return plaintext.decode('utf-8')
         except Exception as e:
-            raise ValidationError("AES復号に失敗しました") from e
+            raise e
 
 # 使用例
 if __name__ == "__main__":
@@ -95,12 +95,10 @@ if __name__ == "__main__":
         original_text = "Hello, World!"
         print("Original Text:", original_text)
 
-        encrypted_data = codec.encode(original_text)
+        encrypted_data = codec.encrypt(original_text)
         print("Encrypted Data:", encrypted_data)
 
-        decrypted_text = codec.decode(encrypted_data)
+        decrypted_text = codec.decrypt(encrypted_data)
         print("Decrypted Text:", decrypted_text)
     except Exception as e:
         print(e)
-else:
-    from lib.custom_error import ValidationError

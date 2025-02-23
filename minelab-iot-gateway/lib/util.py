@@ -1,4 +1,5 @@
 import os
+import sys
 import netifaces
 import socket
 import base64
@@ -14,7 +15,7 @@ class Util:
             mac_address = netifaces.ifaddresses(interface)[netifaces.AF_LINK][0]['addr']
             return mac_address
         except Exception as e:
-            raise ValidationError("MACアドレスの取得に失敗しました") from e
+            raise e
 
     @staticmethod
     def get_root_dir() -> Path:
@@ -23,7 +24,7 @@ class Util:
             root_dir = Path(__file__).resolve().parent.parent
             return root_dir
         except Exception as e:
-            raise ValidationError("ルートディレクトリの取得に失敗しました") from e
+            raise e
 
     @staticmethod
     def get_device_name() -> str:
@@ -32,7 +33,7 @@ class Util:
             device_name = socket.gethostname()
             return device_name
         except Exception as e:
-            raise ValidationError("デバイス名の取得に失敗しました") from e
+            raise e
 
     @staticmethod
     def get_timestamp() -> str:
@@ -42,7 +43,7 @@ class Util:
             timestamp = datetime.now().strftime('%Y-%m-%dT%H-%M-%S')
             return timestamp
         except Exception as e:
-            raise ValidationError("タイムスタンプの取得に失敗しました") from e
+            raise e
 
     @staticmethod
     def encode_base64(data: bytes) -> str:
@@ -51,7 +52,7 @@ class Util:
             encoded_data = base64.b64encode(data).decode('utf-8')
             return encoded_data
         except Exception as e:
-            raise ValidationError("Base64エンコードに失敗しました") from e
+            raise e
 
     @staticmethod
     def create_path(path: Path) -> None:
@@ -60,7 +61,15 @@ class Util:
             if not os.path.exists(path=path):
                 os.makedirs(os.path.dirname(path), exist_ok=True)
         except Exception as e:
-            raise ValidationError("ディレクトリの作成に失敗しました") from e
+            raise e
+
+    @staticmethod
+    def get_exec_file_name():
+        """実行ファイル名を取得する関数"""
+        try:
+            return os.path.splitext(os.path.basename(sys.argv[0]))[0]
+        except Exception as e:
+            raise e
 
 # 使用例
 if __name__ == "__main__":
@@ -83,8 +92,8 @@ if __name__ == "__main__":
         print("Encoded Data:", encoded_data)
         # ディレクトリを作成
         dir_path = root_dir / "data"
-        Util.create_dir(dir_path)
+        Util.create_path(dir_path)
+        # 実行ファイル名を取得
+        print("Exec FileName: ", Util.get_exec_file_name())
     except Exception as e:
         print(e)
-else:
-    from lib.custom_error import ValidationError

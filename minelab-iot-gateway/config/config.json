@@ -1,0 +1,27 @@
+{
+    "ProjectName": "",
+    "SSHConnect": {
+        "PASSWORD": "",
+        "PORT": "",
+        "USERNAME": "",
+        "CLIENT_LIST": [
+            "",
+            "",
+            "",
+            ""
+        ],
+        "REMOTE_PATH": "",
+        "EXEC_NEXMON_CMD": ""
+    },
+    "APIGateway": {
+        "API_KEY": "",
+        "REGION": "",
+        "SERVICE": "",
+        "BASE_PATH": "",
+        "ENDPOINT": ""
+    },
+    "IAMUser": {
+        "ACCESS_KEY": "",
+        "SECRET_KEY": ""
+    }
+}
