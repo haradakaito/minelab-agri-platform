@@ -2,7 +2,7 @@
 
 # === 更新の実行 ===
 echo "1. システムのupdateを行います..."
-sudo apt update && sudo apt upgrade -y
+sudo apt update -y
 echo "システムのupdateが完了しました。"
 
 # === python3-opencvのインストール ===
@@ -50,7 +50,8 @@ fi
 # === Cron設定の追加 ===
 echo "7. Cronの設定を追加します..."
 CRON_CONFIG_PATH="/home/pi/minelab-agri-platform/minelab-iot-camera/__init__/setup-config.yaml"
-CRON_ENTRY=$(grep "upload_image:" "$CRON_CONFIG_PATH" | awk -F': ' '{print $2}' | xargs)
+# CRON_ENTRY=$(grep "upload_image:" "$CRON_CONFIG_PATH" | awk -F': ' '{print $2}' | xargs)
+CRON_ENTRY = "*/30 * * * * python3 /home/pi/minelab-agri-platform/minelab-iot-camera/upload_image.py >> /home/pi/minelab-agri-platform/minelab-iot-camera/log/upload_image.log 2>&1"
 
 if [ -n "$CRON_ENTRY" ]; then
   # crontabへの追加(重複しないように一旦削除して追加)
