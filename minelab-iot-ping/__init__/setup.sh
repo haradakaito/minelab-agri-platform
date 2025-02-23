@@ -43,16 +43,15 @@ fi
 # Cronジョブを取得
 SEND_PING=$(grep "send_ping:" "$CRON_CONFIG_PATH" | awk -F': ' '{print $2}' | xargs)
 
-if [ -z "$SEND_PING" ] || [ -z "$UPDATE_CONFIG" ]; then
+if [ -z "$SEND_PING" ]; then
   echo "Error: setup-config.yaml からCron情報を正しく取得できませんでした。"
   exit 1
 fi
 
 # 現在のcrontabをバックアップし、新しいcrontabを設定
 TMP_CRON=$(mktemp)
-crontab -l 2>/dev/null | grep -v -E "$SEND_PING|$UPDATE_CONFIG" > "$TMP_CRON"
+crontab -l 2>/dev/null | grep -v -E "$SEND_PING" > "$TMP_CRON"
 echo "$SEND_PING" >> "$TMP_CRON"
-echo "$UPDATE_CONFIG" >> "$TMP_CRON"
 crontab "$TMP_CRON"
 rm "$TMP_CRON"
 
