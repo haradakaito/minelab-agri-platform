@@ -13,9 +13,10 @@ class Util:
         """MACアドレスを取得する関数"""
         try:
             mac_address = netifaces.ifaddresses(interface)[netifaces.AF_LINK][0]['addr']
+            raise "エラー"
             return mac_address
         except Exception as e:
-            raise e
+            raise "MACアドレスの取得に失敗しました" from e
 
     @staticmethod
     def get_root_dir() -> Path:
@@ -24,7 +25,7 @@ class Util:
             root_dir = Path(__file__).resolve().parent.parent
             return root_dir
         except Exception as e:
-            raise e
+            raise "ルートディレクトリの取得に失敗しました" from e
 
     @staticmethod
     def get_device_name() -> str:
@@ -33,7 +34,7 @@ class Util:
             device_name = socket.gethostname()
             return device_name
         except Exception as e:
-            raise e
+            raise "デバイス名の取得に失敗しました" from e
 
     @staticmethod
     def get_timestamp() -> str:
@@ -43,7 +44,7 @@ class Util:
             timestamp = datetime.now().strftime('%Y-%m-%dT%H-%M-%S')
             return timestamp
         except Exception as e:
-            raise e
+            raise "タイムスタンプの取得に失敗しました" from e
 
     @staticmethod
     def encode_base64(data: bytes) -> str:
@@ -52,7 +53,7 @@ class Util:
             encoded_data = base64.b64encode(data).decode('utf-8')
             return encoded_data
         except Exception as e:
-            raise e
+            raise "Base64エンコードに失敗しました" from e
 
     @staticmethod
     def create_path(path: Path) -> None:
@@ -61,7 +62,7 @@ class Util:
             if not os.path.exists(path=path):
                 os.makedirs(os.path.dirname(path), exist_ok=True)
         except Exception as e:
-            raise e
+            raise "ディレクトリの作成に失敗しました" from e
 
     @staticmethod
     def get_exec_file_name():
@@ -69,7 +70,7 @@ class Util:
         try:
             return os.path.splitext(os.path.basename(sys.argv[0]))[0]
         except Exception as e:
-            raise e
+            raise "実行ファイル名の取得に失敗しました" from e
 
 # 使用例
 if __name__ == "__main__":
