@@ -1,6 +1,6 @@
 import os
 import concurrent.futures
-from lib import BaseCustomError, ErrorHandler, SSHError, ConfigLoader, AESCodec, Util
+from lib import BaseCustomError, ErrorHandler, ConfigLoader, AESCodec, Util
 from lib_gateway import SSHClient
 
 # 各スレッドで実行する処理
@@ -30,7 +30,7 @@ if __name__ == "__main__":
         for hostname in device_config.get("client_list"):
             ssh_client = SSHClient()
             ssh_client.connect(
-                hostname=str(hostname),
+                hostname=f"{str(hostname)}.local",
                 port=str(device_config.get("port")),
                 username=str(device_config.get("username")),
                 password=str(aes_codec.decode(encrypted_data=ssh_config.get("PASSWORD")))
