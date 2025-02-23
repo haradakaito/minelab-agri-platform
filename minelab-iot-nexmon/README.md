@@ -52,7 +52,7 @@ $ bash setup.sh
 $ sudo reboot
 ```
 
-## 
+## サービスの設定
 
 ```
 $ cd ~
