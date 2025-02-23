@@ -2,5 +2,5 @@
 cron:
   # 画像を送信するスクリプトを定期実行する
   delete_pcap: 0 3 * * * find /home/pi -type f -name "*.pcap" -delete
-  # mcpパラメータ
-  mcp_param: KuMBEQAAAQAsz2cajo4AAAAAAAAAAAAAAAAAAAAAAAAAAA==
+# mcpパラメータ
+mcp_param: KuMBEQAAAQAsz2cajo4AAAAAAAAAAAAAAAAAAAAAAAAAAA==
