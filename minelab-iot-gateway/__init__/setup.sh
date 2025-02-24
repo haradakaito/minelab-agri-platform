@@ -44,11 +44,12 @@ if [ ! -f "$CRON_CONFIG_PATH" ]; then
 fi
 
 # Cronジョブを取得
+UPDATE_CONFIG=$(grep "update_config:" "$CRON_CONFIG_PATH" | awk -F': ' '{print $2}' | xargs)
 UPLOAD_CSV=$(grep "upload_csv:" "$CRON_CONFIG_PATH" | awk -F': ' '{print $2}' | xargs)
 EXEC_NEXMON=$(grep "exec_nexmon:" "$CRON_CONFIG_PATH" | awk -F': ' '{print $2}' | xargs)
 GET_PCAP=$(grep "get_pcap:" "$CRON_CONFIG_PATH" | awk -F': ' '{print $2}' | xargs)
 
-if [ -z "$UPLOAD_CSV" ] || [ -z "$EXEC_NEXMON" ] || [ -z "$GET_PCAP" ]; then
+if [ -z "$UPDATE_CONFIG" ] || [ -z "$UPLOAD_CSV" ] || [ -z "$EXEC_NEXMON" ] || [ -z "$GET_PCAP" ]; then
   echo "Error: setup-config.yaml からCron情報を正しく取得できませんでした。"
   exit 1
 fi
@@ -56,6 +57,7 @@ fi
 # 現在のcrontabをバックアップし、新しいcrontabを設定
 TMP_CRON=$(mktemp)
 crontab -l 2>/dev/null | grep -v -E "$UPLOAD_CSV|$EXEC_NEXMON|$GET_PCAP" > "$TMP_CRON"
+echo "$UPDATE_CONFIG" >> "$TMP_CRON"
 echo "$UPLOAD_CSV" >> "$TMP_CRON"
 echo "$EXEC_NEXMON" >> "$TMP_CRON"
 echo "$GET_PCAP" >> "$TMP_CRON"

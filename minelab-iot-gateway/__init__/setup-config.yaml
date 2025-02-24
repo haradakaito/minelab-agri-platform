@@ -1,5 +1,7 @@
 # Cronの設定情報
 cron:
+  # 設定ファイルを更新するスクリプトを定期実行する
+  update_config: 0 0 1 * * python3 /home/pi/minelab-agri-platform/minelab-iot-gateway/update_config.py >> /home/pi/minelab-agri-platform/minelab-iot-gateway/log/update_config.log 2>&1
   # CSVをアップロードするスクリプトを定期実行する
   upload_csv: 0 5 * * * python3 /home/pi/minelab-agri-platform/minelab-iot-gateway/upload_csv.py >> /home/pi/minelab-agri-platform/minelab-iot-gateway/log/upload_csv.log 2>&1
   # Nexmonを起動し，CSIを収集するスクリプトを定期実行する
