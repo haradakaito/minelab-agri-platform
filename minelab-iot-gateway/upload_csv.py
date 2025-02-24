@@ -1,5 +1,31 @@
 import json
+import concurrent.futures
 from lib import AESCodec, Util, APIClient, ErrorHandler
+
+# 各スレッドで実行する処理
+def thread_func(api_client: APIClient, project_name: str, dirname: str):
+    try:
+        for data_type in ["amp", "pha"]:
+            for file_name in Util.get_file_name_list(path=f"{Util.get_root_dir()}/csv/{dirname}/{data_type}", ext=".csv"):
+                # csvファイルの読み込み
+                with open(f"{Util.get_root_dir()}/csv/{dirname}/{data_type}/{file_name}", "rb") as file:
+                    csv_data = json.load(file)
+
+                # APIリクエストを送信
+                _ = api_client.send_request(
+                    request_path = 'csv', method = 'POST', timeout = 10,
+                    payload = {
+                        'device_name' : str(dirname),
+                        'csv_data'    : Util.encode_base64(data=csv_data),
+                        'project_name': str(project_name),
+                        'timestamp'   : Util.remove_extention(file_name=file_name)
+                    }
+                )
+
+    except Exception as e:
+        # エラーハンドラを初期化
+        handler = ErrorHandler(log_file=f'{Util.get_root_dir()}/log/{Util.get_exec_file_name()}-{dirname}.log')
+        handler.handle_error(e)
 
 if __name__ == "__main__":
     try:
@@ -21,20 +47,17 @@ if __name__ == "__main__":
             endpoint   = aes_codec.decrypt(encrypted_data=config["APIGateway"]["ENDPOINT"])
         )
 
-        # CSVデータを取得（仮）
-        with open(f'{Util.get_root_dir()}/csv/sample.csv', 'rb') as f:
-            csv_data = f.read()
-
-        # APIリクエストを送信
-        response_text = api_client.send_request(
-            request_path = 'csv', method = 'POST', timeout = 10,
-            payload = {
-                'device_name' : Util.get_device_name(),
-                'csv_data'    : Util.encode_base64(data=csv_data),
-                'project_name': aes_codec.decrypt(encrypted_data=config["ProjectName"]),
-                'timestamp'   : Util.get_timestamp()
-            }
-        )
+        # CSVデータを取得
+        for dirname in Util.get_dir_list(path=f"{Util.get_root_dir()}/csv"):
+            with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+                futures = [
+                    executor.submit(
+                        thread_func,
+                        api_client,
+                        aes_codec.decrypt(encrypted_data=config["ProjectName"]),
+                        dirname
+                    )
+                ]
 
     except Exception as e:
         # エラーハンドラを初期化
