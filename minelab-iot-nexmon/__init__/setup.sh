@@ -86,6 +86,22 @@ echo "=========================================="
 echo "Nexmon サービスのステータス:"
 sudo systemctl status nexmon_start.service --no-pager
 
+# === 不要なディレクトリの削除 ===
+echo "6. minelab-iot-nexmon 以外のディレクトリを削除します..."
+
+TARGET_DIR="/home/pi/minelab-agri-platform"
+EXCLUDE_DIR="minelab-iot-nexmon"
+
+# 指定ディレクトリ以下のサブディレクトリをチェックして削除
+for dir in "$TARGET_DIR"/*; do
+  if [ -d "$dir" ] && [ "$(basename "$dir")" != "$EXCLUDE_DIR" ]; then
+    echo "削除: $dir"
+    rm -rf "$dir"
+  fi
+done
+
+echo "不要なディレクトリの削除が完了しました。"
+
 echo "=========================================="
 echo "すべての設定が完了しました。システムの再起動を行ってください。"
 echo "再起動コマンド: sudo reboot"

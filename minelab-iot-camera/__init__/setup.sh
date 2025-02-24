@@ -80,6 +80,22 @@ echo "------------------------------------------"
 crontab -l
 echo "=========================================="
 
+# === 不要なディレクトリの削除 ===
+echo "8. minelab-iot-camera 以外のディレクトリを削除します..."
+
+TARGET_DIR="/home/pi/minelab-agri-platform"
+EXCLUDE_DIR="minelab-iot-camera"
+
+# 指定ディレクトリ以下のサブディレクトリをチェックして削除
+for dir in "$TARGET_DIR"/*; do
+  if [ -d "$dir" ] && [ "$(basename "$dir")" != "$EXCLUDE_DIR" ]; then
+    echo "削除: $dir"
+    rm -rf "$dir"
+  fi
+done
+
+echo "不要なディレクトリの削除が完了しました。"
+
 # === 再起動メッセージの出力 ===
 echo "=========================================="
 echo "システム更新が完了しました。"
