@@ -15,10 +15,11 @@ if __name__ == "__main__":
         # 設定ファイルを読み込む
         with open(f"{Util.get_root_dir()}/config/config.json", "r", encoding="utf-8") as file:
             encrypt_config = json.load(file)
-        # 設定ファイルを復号化
-        decrypt_config = process_json_values(data=encrypt_config, func=lambda x: AESCodec(key=Util.get_mac_address()).decrypt(encrypted_data=x))
-        # 設定ファイルを暗号化
-        encrypt_config = process_json_values(data=decrypt_config, func=lambda x: AESCodec(key=Util.get_mac_address()).encrypt(plaintext=x))
+
+        # 設定ファイルを更新
+        decrypt_config = process_json_values(data=encrypt_config, func=lambda x: AESCodec(key=Util.get_mac_address()).decrypt(encrypted_data=x)) # 設定ファイルを復号化
+        encrypt_config = process_json_values(data=decrypt_config, func=lambda x: AESCodec(key=Util.get_mac_address()).encrypt(plaintext=x))      # 設定ファイルを暗号化
+
         # 設定ファイルを保存
         with open(f"{Util.get_root_dir()}/config/config.json", "w", encoding="utf-8") as file:
             json.dump(encrypt_config, file, indent=4, ensure_ascii=False)
