@@ -48,16 +48,18 @@ if __name__ == "__main__":
         )
 
         # CSVデータを取得
-        for dirname in Util.get_dir_list(path=f"{Util.get_root_dir()}/csv"):
-            with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
-                futures = [
-                    executor.submit(
-                        thread_func,
-                        api_client,
-                        aes_codec.decrypt(encrypted_data=config["ProjectName"]),
-                        dirname
-                    )
-                ]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+            futures = [
+                executor.submit(
+                    thread_func,
+                    api_client,
+                    aes_codec.decrypt(encrypted_data=config["ProjectName"]),
+                    dirname
+                )
+                for dirname in Util.get_dir_list(path=f"{Util.get_root_dir()}/csv")
+            ]
+            # すべてのスレッドの完了を待つ
+            concurrent.futures.wait(futures)
 
     except Exception as e:
         # エラーハンドラを初期化
