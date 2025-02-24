@@ -10,14 +10,13 @@ def thread_func(ssh_clients: dict, hostname: str, remote_path: str, local_path: 
     try:
         # SSHクライアントを取得
         ssh_client = ssh_clients[hostname]
-        sftp       = ssh_client.open_sftp(chdir=remote_path)
-
-        # Pcapファイルを取得
+        # Pcapファイルリストを取得
+        sftp = ssh_client.open_sftp(chdir=remote_path)
         file_list = [file for file in sftp.listdir() if fnmatch(file, f"*.pcap")]
-        Util.create_path(path=f"{local_path}/{hostname}") # 保存先のパス確認
+        # Pcapファイルを取得
         for file in file_list:
+            Util.create_path(path=f"{local_path}/{hostname}") # 保存先のパス確認
             sftp.get(remotepath=f"{remote_path}/{file}", localpath=f"{local_path}/{hostname}/{file}/")
-
         # SSH接続を切断
         sftp.close()
         ssh_client.close()
@@ -48,7 +47,7 @@ if __name__ == "__main__":
                 username = aes_codec.decrypt(encrypted_data=config["SSHConnect"]["USERNAME"]),
                 password = aes_codec.decrypt(encrypted_data=config["SSHConnect"]["PASSWORD"])
             )
-            ssh_clients[hostname] = ssh_client
+            ssh_clients[aes_codec.decrypt(encrypted_data=hostname)] = ssh_client
 
         # マルチスレッドでコマンド実行
         with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
@@ -56,7 +55,7 @@ if __name__ == "__main__":
                 executor.submit(
                     thread_func,
                     ssh_clients,
-                    aes_codec.decrypt(encrypted_data=hostname),
+                    hostname,
                     aes_codec.decrypt(encrypted_data=config["SSHConnect"]["REMOTE_PATH"]),
                     aes_codec.decrypt(encrypted_data=config["SSHConnect"]["LOCAL_PATH"])
                 )

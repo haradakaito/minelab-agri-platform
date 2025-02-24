@@ -4,10 +4,14 @@ from lib import ErrorHandler, AESCodec, Util
 from lib_gateway import SSHClient
 
 # 各スレッドで実行する処理
-def thread_func(ssh_client: SSHClient, hostname: str, exec_command: str):
+def thread_func(ssh_client: SSHClient, hostname: str, remote_path: str, exec_command: str):
     try:
-        sftp = ssh_client.open_sftp(chdir="/home/pi/")
-        ssh_client.exec_command(command=exec_command)
+        # SSHクライアントを取得
+        ssh_client = ssh_clients[hostname]
+        # コマンド実行
+        sftp = ssh_client.open_sftp(chdir=remote_path)
+        ssh_client.exec_command(command=f"{exec_command} {Util.get_timestamp()}.pcap")
+        # SSH接続を切断
         sftp.close()
         ssh_client.close()
 
@@ -31,21 +35,25 @@ if __name__ == "__main__":
             # SSHクライアントを初期化
             ssh_client = SSHClient()
             # SSH接続を確立
-            hostname = aes_codec.decrypt(encrypted_data=hostname)
             ssh_client.connect(
-                hostname = hostname,
+                hostname = aes_codec.decrypt(encrypted_data=hostname),
                 port     = aes_codec.decrypt(encrypted_data=config["SSHConnect"]["PORT"]),
                 username = aes_codec.decrypt(encrypted_data=config["SSHConnect"]["USERNAME"]),
                 password = aes_codec.decrypt(encrypted_data=config["SSHConnect"]["PASSWORD"])
             )
-            ssh_clients[hostname] = ssh_client
+            ssh_clients[aes_codec.decrypt(encrypted_data=hostname)] = ssh_client
 
         # マルチスレッドでコマンド実行
-        exec_command = f"{aes_codec.decrypt(encrypted_data=config['SSHConnect']['EXEC_NEXMON_CMD'])} {Util.get_timestamp()}.pcap"
         with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
             futures = [
-                executor.submit(thread_func, ssh_clients[hostname], hostname, exec_command)
-                for hostname in ssh_clients
+                executor.submit(
+                    thread_func,
+                    ssh_clients,
+                    hostname,
+                    aes_codec.decrypt(encrypted_data=config['SSHConnect']['REMOTE_PATH']),
+                    aes_codec.decrypt(encrypted_data=config['SSHConnect']['EXEC_NEXMON_CMD'])
+                )
+                for hostname in ssh_clients.keys()
             ]
             # すべてのスレッドの完了を待つ
             concurrent.futures.wait(futures)
