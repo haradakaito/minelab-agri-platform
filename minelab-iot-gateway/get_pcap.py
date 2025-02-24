@@ -9,31 +9,34 @@ if __name__ == "__main__":
         with open(f"{Util.get_root_dir()}/config/config.json", "r", encoding="utf-8") as file:
             config = json.load(file)
 
+        # AES暗号化クラスを初期化
+        aes_codec = AESCodec(key=Util.get_mac_address())
+
         # 各クライアントのpcapファイルを取得
         for hostname in config["SSHConnect"]["HOSTNAME_LIST"]:
             # SSHクライアントを初期化
             ssh_client = SSHClient()
             # SSH接続を確立
             ssh_client.connect(
-                hostname = AESCodec(key=Util.get_mac_address()).decrypt(encrypted_data=hostname),
-                port     = AESCodec(key=Util.get_mac_address()).decrypt(encrypted_data=config["SSHConnect"]["PORT"]),
-                username = AESCodec(key=Util.get_mac_address()).decrypt(encrypted_data=config["SSHConnect"]["USERNAME"]),
-                password = AESCodec(key=Util.get_mac_address()).decrypt(encrypted_data=config["SSHConnect"]["PASSWORD"])
+                hostname = aes_codec.decrypt(encrypted_data=hostname),
+                port     = aes_codec.decrypt(encrypted_data=config["SSHConnect"]["PORT"]),
+                username = aes_codec.decrypt(encrypted_data=config["SSHConnect"]["USERNAME"]),
+                password = aes_codec.decrypt(encrypted_data=config["SSHConnect"]["PASSWORD"])
             )
 
             # Pcapファイルリストを取得
             sftp = ssh_client.open_sftp(
-                chdir = AESCodec(key=Util.get_mac_address()).decrypt(encrypted_data=config["SSHConnect"]["REMOTE_PATH"])
+                chdir = aes_codec.decrypt(encrypted_data=config["SSHConnect"]["REMOTE_PATH"])
             )
             file_list = [file for file in sftp.listdir() if fnmatch(file, f"*.pcap")]
 
             # Pcapファイルを取得
             # 保存先のパス確認
-            Util.create_path(path=f"{AESCodec(key=Util.get_mac_address()).decrypt(encrypted_data=config['SSHConnect']['LOCAL_PATH'])}/{AESCodec(key=Util.get_mac_address()).decrypt(encrypted_data=hostname)}/")
+            Util.create_path(path=f"{aes_codec.decrypt(encrypted_data=config['SSHConnect']['LOCAL_PATH'])}/{aes_codec.decrypt(encrypted_data=hostname)}/")
             for file in file_list:
                 sftp.get(
-                    remotepath = f"{AESCodec(key=Util.get_mac_address()).decrypt(encrypted_data=config['SSHConnect']['REMOTE_PATH'])}/{file}",
-                    localpath  = f"{AESCodec(key=Util.get_mac_address()).decrypt(encrypted_data=config['SSHConnect']['LOCAL_PATH'])}/{AESCodec(key=Util.get_mac_address()).decrypt(encrypted_data=hostname)}/{file}/"
+                    remotepath = f"{aes_codec.decrypt(encrypted_data=config['SSHConnect']['REMOTE_PATH'])}/{file}",
+                    localpath  = f"{aes_codec.decrypt(encrypted_data=config['SSHConnect']['LOCAL_PATH'])}/{aes_codec.decrypt(encrypted_data=hostname)}/{file}/"
                 )
 
             # SSH接続を切断

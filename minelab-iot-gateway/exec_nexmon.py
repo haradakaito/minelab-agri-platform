@@ -21,7 +21,9 @@ if __name__ == "__main__":
         # 設定ファイルを読み込む
         with open(f"{Util.get_root_dir()}/config/config.json", "r", encoding="utf-8") as file:
             config = json.load(file)
-        exec_command = f"{AESCodec(key=Util.get_mac_address()).decrypt(encrypted_data=config['SSHConnect']['EXEC_NEXMON_CMD'])} {Util.get_timestamp()}.pcap"
+
+        # AES暗号化クラスを初期化
+        aes_codec = AESCodec(key=Util.get_mac_address())
 
         # 各デバイスごとに SSH クライアントを作成
         ssh_clients = {}
@@ -29,16 +31,17 @@ if __name__ == "__main__":
             # SSHクライアントを初期化
             ssh_client = SSHClient()
             # SSH接続を確立
-            hostname = AESCodec(key=Util.get_mac_address()).decrypt(encrypted_data=hostname)
+            hostname = aes_codec.decrypt(encrypted_data=hostname)
             ssh_client.connect(
                 hostname = hostname,
-                port     = AESCodec(key=Util.get_mac_address()).decrypt(encrypted_data=config["SSHConnect"]["PORT"]),
-                username = AESCodec(key=Util.get_mac_address()).decrypt(encrypted_data=config["SSHConnect"]["USERNAME"]),
-                password = AESCodec(key=Util.get_mac_address()).decrypt(encrypted_data=config["SSHConnect"]["PASSWORD"])
+                port     = aes_codec.decrypt(encrypted_data=config["SSHConnect"]["PORT"]),
+                username = aes_codec.decrypt(encrypted_data=config["SSHConnect"]["USERNAME"]),
+                password = aes_codec.decrypt(encrypted_data=config["SSHConnect"]["PASSWORD"])
             )
             ssh_clients[hostname] = ssh_client
 
         # マルチスレッドでコマンド実行
+        exec_command = f"{aes_codec.decrypt(encrypted_data=config['SSHConnect']['EXEC_NEXMON_CMD'])} {Util.get_timestamp()}.pcap"
         with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
             futures = [
                 executor.submit(thread_func, ssh_clients[hostname], hostname, exec_command)
