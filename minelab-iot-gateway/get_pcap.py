@@ -1,34 +1,46 @@
-import os
-from lib import BaseCustomError, ErrorHandler, ConfigLoader, Util
-from _ssh_service import SSHService
+import json
+from fnmatch import fnmatch
+from lib import AESCodec, Util, ErrorHandler
+from lib_gateway import SSHClient
 
 if __name__ == "__main__":
     try:
-        # デバイス設定を取得
-        device_config = ConfigLoader(config_path=f'{Util.get_root_dir()}/config/device-config.yaml')
+        # 設定ファイルを読み込む
+        with open(f"{Util.get_root_dir()}/config/config.json", "r", encoding="utf-8") as file:
+            config = json.load(file)
 
-        # クライアントリストを取得
-        # MEMO: ネストが深すぎるかもしれないので、要検討
-        for client in device_config.get('client_list'):
-            # SSHサービスを初期化
-            ssh_service = SSHService(
-                hostname=client,
-                port=device_config.get('port'),
-                username=device_config.get('username')
+        # 各クライアントのpcapファイルを取得
+        for hostname in config["SSHConnect"]["HOSTNAME_LIST"]:
+            # SSHクライアントを初期化
+            ssh_client = SSHClient()
+            # SSH接続を確立
+            ssh_client.connect(
+                hostname = AESCodec(key=Util.get_mac_address()).decrypt(encrypted_data=hostname),
+                port     = AESCodec(key=Util.get_mac_address()).decrypt(encrypted_data=config["SSHConnect"]["PORT"]),
+                username = AESCodec(key=Util.get_mac_address()).decrypt(encrypted_data=config["SSHConnect"]["USERNAME"]),
+                password = AESCodec(key=Util.get_mac_address()).decrypt(encrypted_data=config["SSHConnect"]["PASSWORD"])
             )
 
-            # ファイルリストを取得
-            file_list = ssh_service.get_file_list(
-                remote_path=f"{device_config.get('remote_path')}",
-                extention='pcap'
+            # Pcapファイルリストを取得
+            sftp = ssh_client.open_sftp(
+                chdir = AESCodec(key=Util.get_mac_address()).decrypt(encrypted_data=config["SSHConnect"]["REMOTE_PATH"])
             )
-            # ファイルを取得
+            file_list = [file for file in sftp.listdir() if fnmatch(file, f"*.pcap")]
+
+            # Pcapファイルを取得
+            # 保存先のパス確認
+            Util.create_path(path=f"{AESCodec(key=Util.get_mac_address()).decrypt(encrypted_data=config['SSHConnect']['LOCAL_PATH'])}/{AESCodec(key=Util.get_mac_address()).decrypt(encrypted_data=hostname)}/")
             for file in file_list:
-                ssh_service.get_file(
-                    remote_path=f"{device_config.get('remote_path')}/{file}",
-                    local_path=f"{Util.get_root_dir()}/pcap/{client}/{file}"
+                sftp.get(
+                    remotepath = f"{AESCodec(key=Util.get_mac_address()).decrypt(encrypted_data=config['SSHConnect']['REMOTE_PATH'])}/{file}",
+                    localpath  = f"{AESCodec(key=Util.get_mac_address()).decrypt(encrypted_data=config['SSHConnect']['LOCAL_PATH'])}/{AESCodec(key=Util.get_mac_address()).decrypt(encrypted_data=hostname)}/{file}/"
                 )
-    except BaseCustomError as e:
+
+            # SSH接続を切断
+            sftp.close()
+            ssh_client.close()
+
+    except Exception as e:
         # エラーハンドラを初期化
-        handler = ErrorHandler(log_file=f'{Util.get_root_dir()}/log/error-{os.path.splitext(os.path.basename(__file__))[0]}.log')
+        handler = ErrorHandler(log_file=f'{Util.get_root_dir()}/log/{Util.get_exec_file_name()}.log')
         handler.handle_error(e)

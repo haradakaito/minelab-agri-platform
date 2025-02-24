@@ -3,7 +3,6 @@
 # === 更新の実行 ===
 echo "1. システムのupdateを行います..."
 sudo apt update -y
-sudo apt upgrade -y
 echo "システムのupdateが完了しました。"
 
 # === python3-opencvのインストール ===

@@ -4,13 +4,11 @@
         "PASSWORD": "",
         "PORT": "",
         "USERNAME": "",
-        "CLIENT_LIST": [
-            "",
-            "",
-            "",
+        "HOSTNAME_LIST": [
             ""
         ],
         "REMOTE_PATH": "",
+        "LOCAL_PATH": "",
         "EXEC_NEXMON_CMD": ""
     },
     "APIGateway": {

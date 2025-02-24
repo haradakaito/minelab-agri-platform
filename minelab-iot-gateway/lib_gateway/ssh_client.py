@@ -12,7 +12,7 @@ class SSHClient:
             self.client.connect(hostname=hostname, port=port, username=username, password=password)
             return True
         except Exception as e:
-            raise SSHError("SSH接続に失敗しました") from e
+            raise e
 
     def open_sftp(self, chdir: str = None) -> paramiko.SFTPClient:
         """SFTP接続する関数"""
@@ -36,5 +36,3 @@ if __name__ == '__main__':
     sftp = ssh.open_sftp(chdir="/home/pi")
     print(ssh.exec_command("ls"))
     sftp.close()
-else:
-    from lib import SSHError
