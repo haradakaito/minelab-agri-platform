@@ -16,7 +16,7 @@ def thread_func(ssh_clients: dict, hostname: str, remote_path: str, local_path: 
         # Pcapファイルを取得
         for file in file_list:
             Util.create_path(path=f"{local_path}/{hostname}") # 保存先のパス確認
-            sftp.get(remotepath=f"{remote_path}/{file}", localpath=f"{local_path}/{hostname}/{file}/")
+            sftp.get(remotepath=f"{remote_path}/{file}", localpath=f"{local_path}/pcap/{hostname}/{file}/")
         # SSH接続を切断
         sftp.close()
         ssh_client.close()
