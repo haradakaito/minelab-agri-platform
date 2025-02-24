@@ -70,23 +70,23 @@ class Util:
             return os.path.splitext(os.path.basename(sys.argv[0]))[0]
         except Exception as e:
             raise e
-
+    
     @staticmethod
     def get_dir_list(path: str) -> list:
         """指定したパス内のすべてのディレクトリ名をリストで返す関数"""
         try:
-            return [d for d in os.listdir(path) if os.path.isdir(os.path.join(path, d))]
+            return sorted([d for d in os.listdir(path) if os.path.isdir(os.path.join(path, d))])
         except Exception as e:
             raise e
-
+    
     @staticmethod
     def get_file_name_list(path: str, ext: str) -> list:
         """指定したパス内のすべてのファイル名をリストで返す関数"""
         try:
-            return [f for f in os.listdir(path) if f.endswith(ext) and os.path.isfile(os.path.join(path, f))]
+            return sorted([f for f in os.listdir(path) if f.endswith(ext) and os.path.isfile(os.path.join(path, f))])
         except Exception as e:
             raise e
-
+    
     @staticmethod
     def remove_extention(file_name: str) -> str:
         """指定したファイル名の拡張子を外す"""

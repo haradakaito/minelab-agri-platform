@@ -70,6 +70,30 @@ class Util:
             return os.path.splitext(os.path.basename(sys.argv[0]))[0]
         except Exception as e:
             raise e
+    
+    @staticmethod
+    def get_dir_list(path: str) -> list:
+        """指定したパス内のすべてのディレクトリ名をリストで返す関数"""
+        try:
+            return sorted([d for d in os.listdir(path) if os.path.isdir(os.path.join(path, d))])
+        except Exception as e:
+            raise e
+    
+    @staticmethod
+    def get_file_name_list(path: str, ext: str) -> list:
+        """指定したパス内のすべてのファイル名をリストで返す関数"""
+        try:
+            return sorted([f for f in os.listdir(path) if f.endswith(ext) and os.path.isfile(os.path.join(path, f))])
+        except Exception as e:
+            raise e
+    
+    @staticmethod
+    def remove_extention(file_name: str) -> str:
+        """指定したファイル名の拡張子を外す"""
+        try:
+            return os.path.splitext(file_name)[0]
+        except Exception as e:
+            raise e
 
 # 使用例
 if __name__ == "__main__":
@@ -95,5 +119,11 @@ if __name__ == "__main__":
         Util.create_path(dir_path)
         # 実行ファイル名を取得
         print("Exec FileName: ", Util.get_exec_file_name())
+        # ディレクトリ名を取得
+        print("DirList: ", Util.get_dir_list(path="/home/pi"))
+        # ファイル名を取得
+        print("FileList: ", Util.get_file_name_list(path="/home/pi/", ext=".csv"))
+        # 拡張子を外す
+        print("FileName(No Ext): ", Util.remove_extention(file_name="sample.csv"))
     except Exception as e:
         print(e)
