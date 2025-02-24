@@ -25,7 +25,7 @@ class ErrorHandler:
         """エラーをログファイルに書き込む"""
         error_message = self._format_error_message(error)
         logging.error(error_message)
-        print(f"エラーが発生しました: {error_message}")
+        # print(f"エラーが発生しました: {error_message}")
 
     def _format_error_message(self, error: Exception) -> str:
         """エラーの詳細を整形して文字列で返す"""
