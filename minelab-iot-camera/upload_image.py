@@ -29,15 +29,13 @@ if __name__ == "__main__":
 
         # APIリクエストを送信
         response_text = api_client.send_request(
-            request_path='images',
-            method='POST',
-            payload={
+            request_path = 'images', method = 'POST', timeout = 10,
+            payload = {
                 'device_name' : Util.get_device_name(),
                 'image_data'  : Util.encode_base64(data=camera.get()),
                 'project_name': aes_codec.decrypt(encrypted_data=config["ProjectName"]),
                 'timestamp'   : Util.get_timestamp()
-            },
-            timeout=10
+            }
         )
 
     except Exception as e:
