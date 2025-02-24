@@ -8,7 +8,7 @@ def thread_func(ssh_client: SSHClient, hostname: str, remote_path: str, exec_com
     try:
         # SSHクライアントを取得
         ssh_client = ssh_clients[hostname]
-        # コマンド実行
+        # Nexmonコマンド実行
         sftp = ssh_client.open_sftp(chdir=remote_path)
         ssh_client.exec_command(command=f"{exec_command} {Util.get_timestamp()}.pcap")
         # SSH接続を切断
