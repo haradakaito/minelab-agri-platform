@@ -9,7 +9,7 @@ def thread_func(api_client: APIClient, project_name: str, dirname: str):
             for file_name in Util.get_file_name_list(path=f"{Util.get_root_dir()}/csv/{dirname}/{data_type}", ext=".csv"):
                 # csvファイルの読み込み
                 with open(f"{Util.get_root_dir()}/csv/{dirname}/{data_type}/{file_name}", "rb") as file:
-                    csv_data = json.load(file)
+                    csv_data = file.read()
 
                 # APIリクエストを送信
                 _ = api_client.send_request(
@@ -56,7 +56,8 @@ if __name__ == "__main__":
                     aes_codec.decrypt(encrypted_data=config["ProjectName"]),
                     dirname
                 )
-                for dirname in Util.get_dir_list(path=f"{Util.get_root_dir()}/csv")
+                # for dirname in Util.get_dir_list(path=f"{Util.get_root_dir()}/csv")
+                for dirname in ["dir1"]
             ]
             # すべてのスレッドの完了を待つ
             concurrent.futures.wait(futures)
