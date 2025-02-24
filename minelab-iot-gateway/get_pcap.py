@@ -1,7 +1,31 @@
 import json
+import concurrent.futures
 from fnmatch import fnmatch
 from lib import AESCodec, Util, ErrorHandler
 from lib_gateway import SSHClient
+
+# 各スレッドで実行する処理
+def thread_func(ssh_clients: dict, hostname: str, remote_path: str, local_path: str):
+    """各ホストに対してPcapファイルを取得する処理"""
+    try:
+        # SSHクライアントを取得
+        ssh_client = ssh_clients[hostname]
+        sftp       = ssh_client.open_sftp(chdir=remote_path)
+
+        # Pcapファイルを取得
+        file_list = [file for file in sftp.listdir() if fnmatch(file, f"*.pcap")]
+        Util.create_path(path=f"{local_path}/{hostname}") # 保存先のパス確認
+        for file in file_list:
+            sftp.get(remotepath=f"{remote_path}/{file}", localpath=f"{local_path}/{hostname}/{file}/")
+
+        # SSH接続を切断
+        sftp.close()
+        ssh_client.close()
+
+    except Exception as e:
+        # エラーハンドラを初期化
+        handler = ErrorHandler(log_file=f'{Util.get_root_dir()}/log/{Util.get_exec_file_name()}-{hostname}.log')
+        handler.handle_error(e)
 
 if __name__ == "__main__":
     try:
@@ -13,6 +37,7 @@ if __name__ == "__main__":
         aes_codec = AESCodec(key=Util.get_mac_address())
 
         # 各クライアントのpcapファイルを取得
+        ssh_clients = {}
         for hostname in config["SSHConnect"]["HOSTNAME_LIST"]:
             # SSHクライアントを初期化
             ssh_client = SSHClient()
@@ -23,25 +48,22 @@ if __name__ == "__main__":
                 username = aes_codec.decrypt(encrypted_data=config["SSHConnect"]["USERNAME"]),
                 password = aes_codec.decrypt(encrypted_data=config["SSHConnect"]["PASSWORD"])
             )
+            ssh_clients[hostname] = ssh_client
 
-            # Pcapファイルリストを取得
-            sftp = ssh_client.open_sftp(
-                chdir = aes_codec.decrypt(encrypted_data=config["SSHConnect"]["REMOTE_PATH"])
-            )
-            file_list = [file for file in sftp.listdir() if fnmatch(file, f"*.pcap")]
-
-            # Pcapファイルを取得
-            # 保存先のパス確認
-            Util.create_path(path=f"{aes_codec.decrypt(encrypted_data=config['SSHConnect']['LOCAL_PATH'])}/{aes_codec.decrypt(encrypted_data=hostname)}/")
-            for file in file_list:
-                sftp.get(
-                    remotepath = f"{aes_codec.decrypt(encrypted_data=config['SSHConnect']['REMOTE_PATH'])}/{file}",
-                    localpath  = f"{aes_codec.decrypt(encrypted_data=config['SSHConnect']['LOCAL_PATH'])}/{aes_codec.decrypt(encrypted_data=hostname)}/{file}/"
+        # マルチスレッドでコマンド実行
+        with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+            futures = [
+                executor.submit(
+                    thread_func,
+                    ssh_clients,
+                    aes_codec.decrypt(encrypted_data=hostname),
+                    aes_codec.decrypt(encrypted_data=config["SSHConnect"]["REMOTE_PATH"]),
+                    aes_codec.decrypt(encrypted_data=config["SSHConnect"]["LOCAL_PATH"])
                 )
-
-            # SSH接続を切断
-            sftp.close()
-            ssh_client.close()
+                for hostname in ssh_clients.keys()
+            ]
+            # すべてのスレッドの完了を待つ
+            concurrent.futures.wait(futures)
 
     except Exception as e:
         # エラーハンドラを初期化
