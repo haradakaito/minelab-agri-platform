@@ -22,7 +22,7 @@
         "ACCESS_KEY": "",
         "SECRET_KEY": ""
     },
-    "CSIDecoder": {
-        "decoder": ""
+    "CSIChanger": {
+        "DECODER": ""
     }
 }
