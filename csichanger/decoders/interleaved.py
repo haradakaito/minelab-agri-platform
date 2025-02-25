@@ -1,7 +1,7 @@
-__all__ = ['read_pcap']
-
 import os
 import numpy as np
+
+__all__ = ['read_pcap']
 
 # Null および Pilot OFDMサブキャリアのインデックス
 nulls = {
