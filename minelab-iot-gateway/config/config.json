@@ -23,6 +23,9 @@
         "SECRET_KEY": ""
     },
     "CSIChanger": {
-        "DECODER": ""
+        "DECODER": "",
+        "REMOVE_NULL_SUBCARRIERS": "",
+        "REMOVE_PILOT_SUBCARRIERS": "",
+        "BANDWIDTH": ""
     }
 }
