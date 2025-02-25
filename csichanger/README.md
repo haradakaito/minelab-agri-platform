@@ -18,7 +18,7 @@ $ python csiexplorer.py
 // "help"と入力するとヘルプメッセージが表示される
 ```
 
-## 実際のプロット例
+## 実際の実行例
 
 ```
 $ python csiexplorer.py
@@ -51,6 +51,10 @@ Core and Spatial Stream: 0x0000
 RSSI: 17
 FCTL: 17
 ```
+
+## 動作画面
+
+![動作画面](https://github.com/user-attachments/assets/65d43e30-5da3-4728-93b8-7ff538650ed6)
 
 ## 参考元
 
