@@ -15,8 +15,15 @@ def thread_func(ssh_clients: dict, hostname: str, remote_path: str, local_path: 
         file_list = [file for file in sftp.listdir() if fnmatch(file, f"*.pcap")]
         # Pcapファイルを取得
         for file in file_list:
-            Util.create_path(path=f"{local_path}/pcap/{hostname}") # 保存先のパス確認
-            sftp.get(remotepath=f"{remote_path}/{file}", localpath=f"{local_path}/pcap/{hostname}/{file}/")
+            try:
+                Util.create_path(path=f"{local_path}/pcap/{hostname}") # 保存先のパス確認
+                sftp.get(remotepath=f"{remote_path}/{file}", localpath=f"{local_path}/pcap/{hostname}/{file}/")
+
+            except Exception as e:
+                # エラーハンドラを初期化
+                handler = ErrorHandler(log_file=f'{Util.get_root_dir()}/log/{Util.get_exec_file_name()}-{hostname}.log')
+                handler.log_error(e)
+                continue
         # SSH接続を切断
         sftp.close()
         ssh_client.close()

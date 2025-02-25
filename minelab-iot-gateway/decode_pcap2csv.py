@@ -26,7 +26,8 @@ def thread_func(dirname: str):
             except Exception as e:
                 # エラーハンドラを初期化
                 handler = ErrorHandler(log_file=f'{Util.get_root_dir()}/log/{Util.get_exec_file_name()}-{dirname}.log')
-                handler.handle_error(e)
+                handler.log_error(e)
+                continue
     except Exception as e:
         # エラーハンドラを初期化
         handler = ErrorHandler(log_file=f'{Util.get_root_dir()}/log/{Util.get_exec_file_name()}-{dirname}.log')
