@@ -1,7 +1,6 @@
 import json
 import importlib
-import config
-from lib import Util, AESCodec
+from lib import Util, AESCodec, ErrorHandler
 
 if __name__ == "__main__":
     try:
@@ -15,13 +14,13 @@ if __name__ == "__main__":
         # デコーダを読み込み
         decoder = importlib.import_module(f"lib_gateway.{aes_codec.decrypt(encrypted_data=_config['CSIChanger']['DECODER'])}")
 
-        # Pcapファイル名を入力
-        pcap_filename = input('Pcapファイル名: ')
-        # 拡張子がない場合は付与する
-        if '.pcap' not in pcap_filename:
-            pcap_filename += '.pcap'
-        pcap_filepath = '/'.join([config.pcap_fileroot, pcap_filename])
-        # パケットデータを読み込む
-        samples = decoder.read_pcap(pcap_filepath)
+        # pcapファイル名リストを取得
+        root_path = Util.get_root_dir()
+        for dirname in Util.get_dir_list(path=f"{root_path}/pcap"):
+            for filename in Util.get_file_name_list(path=f"{root_path}/pcap/{dirname}", ext=".pcap"):
+                samples = decoder.read_pcap(pcap_filepath=f"{root_path}/pcap/{dirname}/{filename}")
+
     except Exception as e:
-        print(e)
+        # エラーハンドラを初期化
+        handler = ErrorHandler(log_file=f'{Util.get_root_dir()}/log/{Util.get_exec_file_name()}.log')
+        handler.handle_error(e)
