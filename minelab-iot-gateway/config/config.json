@@ -23,6 +23,6 @@
         "SECRET_KEY": ""
     },
     "CSIDecoder": {
-        "decoder": "interleaved"
+        "decoder": ""
     }
 }
