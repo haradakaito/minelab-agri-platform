@@ -8,20 +8,25 @@ def thread_func(api_client: APIClient, project_name: str, dirname: str):
     try:
         for data_type in ["amp", "pha"]:
             for file_name in Util.get_file_name_list(path=f"{Util.get_root_dir()}/csv/{dirname}/{data_type}", ext=".csv"):
-                # csvファイルの読み込み
-                with open(f"{Util.get_root_dir()}/csv/{dirname}/{data_type}/{file_name}", "rb") as file:
-                    csv_data = file.read()
-                # APIリクエストを送信
-                _ = api_client.send_request(
-                    request_path = 'csv', method = 'POST', timeout = 10,
-                    payload = {
-                        'device_name' : f"{str(dirname)}/{data_type}",
-                        'csv_data'    : Util.encode_base64(data=csv_data),
-                        'project_name': str(project_name),
-                        'timestamp'   : Util.remove_extention(file_name=file_name)
-                    }
-                )
+                try:
+                    # csvファイルの読み込み
+                    with open(f"{Util.get_root_dir()}/csv/{dirname}/{data_type}/{file_name}", "rb") as file:
+                        csv_data = file.read()
+                    # APIリクエストを送信
+                    _ = api_client.send_request(
+                        request_path = 'csv', method = 'POST', timeout = 10,
+                        payload = {
+                            'device_name' : f"{str(dirname)}/{data_type}",
+                            'csv_data'    : Util.encode_base64(data=csv_data),
+                            'project_name': str(project_name),
+                            'timestamp'   : Util.remove_extention(file_name=file_name)
+                        }
+                    )
 
+                except Exception as e:
+                    # エラーハンドラを初期化
+                    handler = ErrorHandler(log_file=f'{Util.get_root_dir()}/log/{Util.get_exec_file_name()}-{dirname}.log')
+                    handler.handle_error(e)
     except Exception as e:
         # エラーハンドラを初期化
         handler = ErrorHandler(log_file=f'{Util.get_root_dir()}/log/{Util.get_exec_file_name()}-{dirname}.log')
