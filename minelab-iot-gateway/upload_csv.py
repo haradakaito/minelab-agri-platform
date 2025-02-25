@@ -11,7 +11,6 @@ def thread_func(api_client: APIClient, project_name: str, dirname: str):
                 # csvファイルの読み込み
                 with open(f"{Util.get_root_dir()}/csv/{dirname}/{data_type}/{file_name}", "rb") as file:
                     csv_data = file.read()
-
                 # APIリクエストを送信
                 _ = api_client.send_request(
                     request_path = 'csv', method = 'POST', timeout = 10,
