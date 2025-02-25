@@ -15,7 +15,7 @@ def thread_func(api_client: APIClient, project_name: str, dirname: str):
                 _ = api_client.send_request(
                     request_path = 'csv', method = 'POST', timeout = 10,
                     payload = {
-                        'device_name' : str(dirname),
+                        'device_name' : f"{str(dirname)}/{data_type}",
                         'csv_data'    : Util.encode_base64(data=csv_data),
                         'project_name': str(project_name),
                         'timestamp'   : Util.remove_extention(file_name=file_name)
@@ -56,8 +56,7 @@ if __name__ == "__main__":
                     aes_codec.decrypt(encrypted_data=config["ProjectName"]),
                     dirname
                 )
-                # for dirname in Util.get_dir_list(path=f"{Util.get_root_dir()}/csv")
-                for dirname in ["dir1"]
+                for dirname in Util.get_dir_list(path=f"{Util.get_root_dir()}/csv")
             ]
             # すべてのスレッドの完了を待つ
             concurrent.futures.wait(futures)
