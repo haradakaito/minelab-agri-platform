@@ -52,6 +52,9 @@ RSSI: 17
 FCTL: 17
 ```
 
+![動作画面](https://github.com/user-attachments/assets/84cab273-ee37-427c-a56a-93a44546cbf6)
+
+
 ![image](https://github.com/user-attachments/assets/70d4f9ed-e07a-42a6-89b0-713ce2c59280)
 
 ## 参考元
