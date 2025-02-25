@@ -54,9 +54,6 @@ FCTL: 17
 
 ![image](https://github.com/user-attachments/assets/70d4f9ed-e07a-42a6-89b0-713ce2c59280)
 
-
-![動作画面](https://github.com/user-attachments/assets/9e4b9c1f-c3d9-4ba1-a9aa-1d9e3af67a6b)
-
 ## 参考元
 
 CSI Explorer：https://github.com/nexmonster/nexmon_csi/tree/feature/python/utils/python
