@@ -52,6 +52,8 @@ RSSI: 17
 FCTL: 17
 ```
 
+![動作画面](https://github.com/user-attachments/assets/9e4b9c1f-c3d9-4ba1-a9aa-1d9e3af67a6b)
+
 ## 参考元
 
 CSI Explorer：https://github.com/nexmonster/nexmon_csi/tree/feature/python/utils/python
