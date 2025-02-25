@@ -4,6 +4,7 @@ from lib import AESCodec, Util, APIClient, ErrorHandler
 
 # 各スレッドで実行する処理
 def thread_func(api_client: APIClient, project_name: str, dirname: str):
+    """CSVデータをアップロードする"""
     try:
         for data_type in ["amp", "pha"]:
             for file_name in Util.get_file_name_list(path=f"{Util.get_root_dir()}/csv/{dirname}/{data_type}", ext=".csv"):
