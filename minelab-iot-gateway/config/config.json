@@ -21,5 +21,8 @@
     "IAMUser": {
         "ACCESS_KEY": "",
         "SECRET_KEY": ""
+    },
+    "CSIDecoder": {
+        "decoder": "interleaved"
     }
 }
