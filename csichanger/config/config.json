@@ -1,0 +1,6 @@
+{
+    "DefaultFile": "_sample.pcap",
+    "InputPath": "pcap",
+    "OutputPath": "csv",
+    "Decoder": "interleaved"
+}
