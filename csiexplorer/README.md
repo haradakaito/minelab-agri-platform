@@ -2,12 +2,12 @@
 
 ## CSIエクスプローラーの起動
 
-- csichanger/pcapfilesディレクトリ直下に，任意のpcapファイルを置いておく
+- csiexplorer/pcapfilesディレクトリ直下に，任意のpcapファイルを置いておく
 
 ```
 $ cd ~
 $ git clone https://github.com/haradakaito/minelab-agri-platform.git
-$ cd minelab-agri-platform/csichanger/
+$ cd minelab-agri-platform/csiexplorer/
 $ python csiexplorer.py
 
 // "Pcapファイル名："と表示されるので，任意のファイル名を入力
