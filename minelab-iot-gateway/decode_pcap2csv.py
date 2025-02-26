@@ -15,8 +15,8 @@ def thread_func(dirname: str):
                 # Pcapファイルの読み込み
                 samples = decoder.read_pcap(pcap_filepath=f"{Util.get_root_dir()}/pcap/{dirname}/{filename}")
                 # データの抽出
-                csi_amp = [np.abs(samples.get_csi(index=index, rm_nulls=True, rm_pilots=False)) for index in range(2)]   # 振幅
-                csi_pha = [np.angle(samples.get_csi(index=index, rm_nulls=True, rm_pilots=False)) for index in range(2)] # 位相
+                csi_amp = [np.abs(samples.get_csi(index=index, rm_nulls=True, rm_pilots=False)) for index in range(samples.nsamples)]   # 振幅
+                csi_pha = [np.angle(samples.get_csi(index=index, rm_nulls=True, rm_pilots=False)) for index in range(samples.nsamples)] # 位相
                 # データをcsvで保存
                 df_amp = pd.DataFrame(csi_amp)
                 df_pha = pd.DataFrame(csi_pha)
