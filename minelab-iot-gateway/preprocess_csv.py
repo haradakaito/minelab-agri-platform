@@ -1,12 +1,13 @@
-import json
 import concurrent.futures
 import numpy as np
 from lib_gateway import PreProcessor
-from lib import Util, AESCodec, ErrorHandler
+from lib import Util, ErrorHandler
 
 # 各スレッドで実行する関数
-def thread_func():
+def thread_func(dirname: str):
     try:
+        # 振幅データの調整
+        # 位相データの調整
         pass
 
     except Exception as e:
@@ -16,10 +17,18 @@ def thread_func():
 
 if __name__ == "__main__":
     try:
-        # 設定ファイルを読み込む
-        with open(f"{Util.get_root_dir()}/config/config.json", "r", encoding="utf-8") as file:
-            config = json.load(file)
-        pass
+
+        # CSVデータを取得
+        with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+            futures = [
+                executor.submit(
+                    thread_func,
+                    dirname
+                )
+                for dirname in Util.get_dir_list(path=f"{Util.get_root_dir()}/csv")
+            ]
+            # すべてのスレッドの完了を待つ
+            concurrent.futures.wait(futures)
 
     except Exception as e:
         # エラーハンドラを初期化

@@ -34,33 +34,22 @@ if ! systemctl is-active --quiet cron; then
 fi
 echo "cronのサービスは正常に動作しています。"
 
-# === setup-config.yaml の Cron 設定を適用 ===
-echo "6. setup-config.yaml の Cron 設定を適用します..."
-CRON_CONFIG_PATH="/home/pi/minelab-agri-platform/minelab-iot-gateway/__init__/setup-config.yaml"
-
-if [ ! -f "$CRON_CONFIG_PATH" ]; then
-  echo "Error: setup-config.yaml が見つかりません。"
-  exit 1
-fi
-
-# Cronジョブを取得
-UPDATE_CONFIG=$(grep "update_config:" "$CRON_CONFIG_PATH" | awk -F': ' '{print $2}' | xargs)
-UPLOAD_CSV=$(grep "upload_csv:" "$CRON_CONFIG_PATH" | awk -F': ' '{print $2}' | xargs)
-EXEC_NEXMON=$(grep "exec_nexmon:" "$CRON_CONFIG_PATH" | awk -F': ' '{print $2}' | xargs)
-GET_PCAP=$(grep "get_pcap:" "$CRON_CONFIG_PATH" | awk -F': ' '{print $2}' | xargs)
-
-if [ -z "$UPDATE_CONFIG" ] || [ -z "$UPLOAD_CSV" ] || [ -z "$EXEC_NEXMON" ] || [ -z "$GET_PCAP" ]; then
-  echo "Error: setup-config.yaml からCron情報を正しく取得できませんでした。"
-  exit 1
-fi
+# === Cron設定の適用 ===
+echo "6. Cronの設定を適用します..."
 
 # 現在のcrontabをバックアップし、新しいcrontabを設定
 TMP_CRON=$(mktemp)
-crontab -l 2>/dev/null | grep -v -E "$UPLOAD_CSV|$EXEC_NEXMON|$GET_PCAP" > "$TMP_CRON"
-echo "$UPDATE_CONFIG" >> "$TMP_CRON"
-echo "$UPLOAD_CSV" >> "$TMP_CRON"
-echo "$EXEC_NEXMON" >> "$TMP_CRON"
-echo "$GET_PCAP" >> "$TMP_CRON"
+crontab -l 2>/dev/null | grep -v -E "update_config|exec_nexmon|get_pcap|delete_pcap|preprocess_csv|upload_csv|delete_csv" > "$TMP_CRON"
+
+echo "0 0 1 * * python3 /home/pi/minelab-agri-platform/minelab-iot-gateway/update_config.py >> /home/pi/minelab-agri-platform/minelab-iot-gateway/log/update_config.log 2>&1" >> "$TMP_CRON"
+echo "*/15 * * * * python3 /home/pi/minelab-agri-platform/minelab-iot-gateway/exec_nexmon.py >> /home/pi/minelab-agri-platform/minelab-iot-gateway/log/exec_nexmon.log 2>&1" >> "$TMP_CRON"
+echo "0 2 * * * python3 /home/pi/minelab-agri-platform/minelab-iot-gateway/get_pcap.py >> /home/pi/minelab-agri-platform/minelab-iot-gateway/log/get_pcap.log 2>&1" >> "$TMP_CRON"
+echo "0 3 * * * python3 /home/pi/minelab-agri-platform/minelab-iot-gateway/decode_pcap2csv.py >> /home/pi/minelab-agri-platform/minelab-iot-gateway/log/decode_pcap2csv.log 2>&1" >> "$TMP_CRON"
+echo "0 4 * * * find /home/pi/minelab-agri-platform/minelab-iot-gateway/pcap -type f -name \"*.pcap\" -delete" >> "$TMP_CRON"
+echo "0 5 * * * python3 /home/pi/minelab-agri-platform/minelab-iot-gateway/preprocess_csv.py >> /home/pi/minelab-agri-platform/minelab-iot-gateway/log/preprocess_csv.log 2>&1" >> "$TMP_CRON"
+echo "0 6 * * * python3 /home/pi/minelab-agri-platform/minelab-iot-gateway/upload_csv.py >> /home/pi/minelab-agri-platform/minelab-iot-gateway/log/upload_csv.log 2>&1" >> "$TMP_CRON"
+echo "0 7 * * * find /home/pi/minelab-agri-platform/minelab-iot-gateway/csv -type f -name \"*.csv\" -delete" >> "$TMP_CRON"
+
 crontab "$TMP_CRON"
 rm "$TMP_CRON"
 
