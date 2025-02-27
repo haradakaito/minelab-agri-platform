@@ -7,7 +7,7 @@
 ```
 $ cd ~
 $ git clone https://github.com/haradakaito/minelab-agri-platform.git
-$ cd minelab-agri-platform/csiexplorer/
+$ cd minelab-agri-platform/_csiexplorer/
 $ python csiexplorer.py
 
 // "Pcapファイル名："と表示されるので，任意のファイル名を入力
