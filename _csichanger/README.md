@@ -7,7 +7,7 @@
 ```
 $ cd ~
 $ git clone https://github.com/haradakaito/minelab-agri-platform.git
-$ cd minelab-agri-platform/csichanger/
+$ cd minelab-agri-platform/_csichanger/
 $ python csichanger.py
 
 // "ファイル名を入力してください："と表示されるので，任意のファイル名を入力
