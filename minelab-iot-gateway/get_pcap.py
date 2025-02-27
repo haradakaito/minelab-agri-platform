@@ -49,7 +49,7 @@ if __name__ == "__main__":
             ssh_client = SSHClient()
             # SSH接続を確立
             ssh_client.connect(
-                hostname = aes_codec.decrypt(encrypted_data=hostname),
+                hostname = f"{aes_codec.decrypt(encrypted_data=hostname)}.local",
                 port     = aes_codec.decrypt(encrypted_data=config["SSHConnect"]["PORT"]),
                 username = aes_codec.decrypt(encrypted_data=config["SSHConnect"]["USERNAME"]),
                 password = aes_codec.decrypt(encrypted_data=config["SSHConnect"]["PASSWORD"])
