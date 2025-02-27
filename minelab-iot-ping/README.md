@@ -37,3 +37,12 @@ $ chmod +x setup.sh
 $ bash setup.sh
 $ sudo reboot
 ```
+
+## 設定ファイルの記入
+
+```
+$ cd ~/minelab-agri-platform/minelab-iot-camera/config
+$ sudo nano config.json
+
+# 全てのパラメータを入力して保存
+```
