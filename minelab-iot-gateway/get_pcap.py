@@ -5,7 +5,7 @@ from lib import AESCodec, Util, ErrorHandler
 from lib_gateway import SSHClient
 
 # 各スレッドで実行する処理
-def thread_func(ssh_clients: dict, hostname: str, remote_path: str, local_path: str):
+def thread_func(ssh_clients: dict, hostname: str, remote_path: str):
     """各ホストに対してPcapファイルを取得する処理"""
     try:
         # SSHクライアントを取得
@@ -16,8 +16,8 @@ def thread_func(ssh_clients: dict, hostname: str, remote_path: str, local_path: 
         # Pcapファイルを取得
         for file in file_list:
             try:
-                Util.create_path(path=f"{local_path}/pcap/{hostname}") # 保存先のパス確認
-                sftp.get(remotepath=f"{remote_path}/{file}", localpath=f"{local_path}/pcap/{hostname}/{file}/")
+                Util.create_path(path=f"{Util.get_root_dir()}/pcap/{hostname}") # 保存先のパス確認
+                sftp.get(remotepath=f"{remote_path}/{file}", localpath=f"{Util.get_root_dir()}/pcap/{hostname}/{file}/")
 
             except Exception as e:
                 # エラーハンドラを初期化
@@ -63,8 +63,7 @@ if __name__ == "__main__":
                     thread_func,
                     ssh_clients,
                     hostname,
-                    aes_codec.decrypt(encrypted_data=config["SSHConnect"]["REMOTE_PATH"]),
-                    aes_codec.decrypt(encrypted_data=config["SSHConnect"]["LOCAL_PATH"])
+                    aes_codec.decrypt(encrypted_data=config["SSHConnect"]["REMOTE_PATH"])
                 )
                 for hostname in ssh_clients.keys()
             ]
