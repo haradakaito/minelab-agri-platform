@@ -1,6 +1,6 @@
 # Cronの設定情報
 cron:
-  # 画像を送信するスクリプトを定期実行する
-  upload_image: */30 * * * * python3 /home/pi/minelab-agri-platform/minelab-iot-camera/upload_image.py >> /home/pi/minelab-agri-platform/minelab-iot-camera/log/upload_image.log 2>&1
   # 設定ファイルを更新するスクリプトを定期実行する
   update_config: 0 0 1 * * python3 /home/pi/minelab-agri-platform/minelab-iot-camera/update_config.py >> /home/pi/minelab-agri-platform/minelab-iot-camera/log/update_config.log 2>&1
+  # 画像を送信するスクリプトを定期実行する
+  upload_image: */30 * * * * python3 /home/pi/minelab-agri-platform/minelab-iot-camera/upload_image.py >> /home/pi/minelab-agri-platform/minelab-iot-camera/log/upload_image.log 2>&1
