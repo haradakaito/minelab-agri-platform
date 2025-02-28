@@ -55,11 +55,11 @@ class Util:
             raise e
 
     @staticmethod
-    def create_path(path: Path) -> None:
+    def create_path(path: str) -> None:
         """指定パスを作成する関数"""
         try:
-            if not os.path.exists(path=path):
-                os.makedirs(os.path.dirname(path), exist_ok=True)
+            if not os.path.exists(path):
+                os.makedirs(path)
         except Exception as e:
             raise e
 
@@ -115,8 +115,7 @@ if __name__ == "__main__":
         encoded_data = Util.encode_base64(data)
         print("Encoded Data:", encoded_data)
         # ディレクトリを作成
-        dir_path = root_dir / "data"
-        Util.create_path(dir_path)
+        Util.create_path(path="/home/pi/minelab-agri-platform/minelab-iot-gateway/pcap/minelab-iot-nexmon-1")
         # 実行ファイル名を取得
         print("Exec FileName: ", Util.get_exec_file_name())
         # ディレクトリ名を取得
