@@ -17,19 +17,17 @@ def thread_func(hostname: str, pcap_path: str, csv_path: str):
         for filename in Util.get_file_name_list(path=f"{pcap_path}/{hostname}", ext=".pcap"):
             # Pcapファイルの読み込み
             samples = decoder.read_pcap(pcap_filepath=f"{pcap_path}/{hostname}/{filename}")
+
             # 振幅データの抽出
-            csi_amp_df = pd.DataFrame(
-                [np.abs(samples.get_csi(index=index, rm_nulls=True, rm_pilots=False)) for index in range(samples.nsamples)]
-            )
+            csi_amp_df = pd.DataFrame([np.abs(samples.get_csi(index=index, rm_nulls=True, rm_pilots=False)) for index in range(samples.nsamples)], columns = Util.get_alphabet_list(num=samples.nsubcarriers))
             # 位相データの抽出
-            csi_pha_df = pd.DataFrame(
-                [np.angle(samples.get_csi(index=index, rm_nulls=True, rm_pilots=False)) for index in range(samples.nsamples)]
-            )
-            # 受信時間データの抽出
-            csi_time_df = pd.DataFrame(
-                [samples.get_time(index=index) for index in range(samples.nsamples)],
-                columns=["Time"]
-            )
+            csi_pha_df = pd.DataFrame([np.angle(samples.get_csi(index=index, rm_nulls=True, rm_pilots=False)) for index in range(samples.nsamples)], columns = Util.get_alphabet_list(num=samples.nsubcarriers))
+
+            # 受信時間データの抽出・追加
+            csi_time_df = pd.DataFrame([samples.get_time(index=index) for index in range(samples.nsamples)], columns=["Time"])
+            csi_amp_df  = pd.concat([csi_time_df, csi_amp_df], axis=1)
+            csi_pha_df  = pd.concat([csi_time_df, csi_pha_df], axis=1)
+
             # データをcsvで保存
             csi_amp_df.to_csv(f"{csv_path}/amp/{Util.remove_extention(file_name=filename)}.csv")
             csi_pha_df.to_csv(f"{csv_path}/pha/{Util.remove_extention(file_name=filename)}.csv")

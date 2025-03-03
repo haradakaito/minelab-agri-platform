@@ -22,9 +22,10 @@ class SampleSet(object):
     """PCAPファイルから読み取ったデータを格納するヘルパークラス"""
     def __init__(self, samples, bandwidth, timestamps):
         self.rssi, self.fctl, self.mac, self.seq, self.css, self.csi = samples
-        self.timestamps = timestamps  # 受信時間を追加
-        self.nsamples   = self.csi.shape[0]
-        self.bandwidth  = bandwidth
+        self.timestamps   = timestamps        # 受信時間を追加
+        self.nsamples     = self.csi.shape[0] # サンプル数
+        self.nsubcarriers = self.csi.shape[1] # サブキャリア数
+        self.bandwidth    = bandwidth         # 帯域幅
 
     def get_rssi(self, index):
         """RSSIを取得"""
