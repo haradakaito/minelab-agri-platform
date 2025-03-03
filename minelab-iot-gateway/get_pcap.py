@@ -5,32 +5,25 @@ from lib import AESCodec, Util, ErrorHandler
 from lib_gateway import SSHClient
 
 # 各スレッドで実行する処理
-def thread_func(ssh_clients: dict, hostname: str, remote_path: str):
+def thread_func(ssh_client: SSHClient, remote_path: str, local_path: str):
     """各ホストに対してPcapファイルを取得する処理"""
     try:
-        # SSHクライアントを取得
-        ssh_client = ssh_clients[hostname]
+        # 保存先のパス確認
+        Util.create_path(path=local_path)
         # Pcapファイルリストを取得
         sftp = ssh_client.open_sftp(chdir=remote_path)
         file_list = [file for file in sftp.listdir() if fnmatch(file, f"*.pcap")]
         # Pcapファイルを取得
         for file in file_list:
-            try:
-                Util.create_path(path=f"{Util.get_root_dir()}/pcap/{hostname}") # 保存先のパス確認
-                sftp.get(remotepath=f"{remote_path}/{file}", localpath=f"{Util.get_root_dir()}/pcap/{hostname}/{file}/")
+            sftp.get(remotepath=f"{remote_path}/{file}", localpath=f"{local_path}/{file}")
 
-            except Exception as e:
-                # エラーハンドラを初期化
-                handler = ErrorHandler(log_file=f'{Util.get_root_dir()}/log/{Util.get_exec_file_name()}-{hostname}.log')
-                handler.log_error(e)
-                continue
         # SSH接続を切断
         sftp.close()
         ssh_client.close()
 
     except Exception as e:
         # エラーハンドラを初期化
-        handler = ErrorHandler(log_file=f'{Util.get_root_dir()}/log/{Util.get_exec_file_name()}-{hostname}.log')
+        handler = ErrorHandler(log_file=f'{Util.get_root_dir()}/log/{Util.get_exec_file_name()}.log')
         handler.handle_error(e)
 
 if __name__ == "__main__":
@@ -61,11 +54,11 @@ if __name__ == "__main__":
             futures = [
                 executor.submit(
                     thread_func,
-                    ssh_clients,
-                    hostname,
-                    aes_codec.decrypt(encrypted_data=config["SSHConnect"]["REMOTE_PATH"])
+                    ssh_clients[aes_codec.decrypt(encrypted_data=hostname)],                   # SSHクライアント
+                    aes_codec.decrypt(encrypted_data=config["SSHConnect"]["REMOTE_PATH"]),     # リモートパス（取得先）
+                    f"{Util.get_root_dir()}/pcap/{aes_codec.decrypt(encrypted_data=hostname)}" # ローカルパス（保存先）
                 )
-                for hostname in ssh_clients.keys()
+                for hostname in config["SSHConnect"]["HOSTNAME_LIST"]
             ]
             # すべてのスレッドの完了を待つ
             concurrent.futures.wait(futures)
