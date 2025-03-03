@@ -25,6 +25,11 @@ def thread_func(hostname: str, pcap_path: str, csv_path: str):
             csi_pha_df = pd.DataFrame(
                 [np.angle(samples.get_csi(index=index, rm_nulls=True, rm_pilots=False)) for index in range(samples.nsamples)]
             )
+            # 受信時間データの抽出
+            csi_time_df = pd.DataFrame(
+                [samples.get_time(index=index) for index in range(samples.nsamples)],
+                columns=["Time"]
+            )
             # データをcsvで保存
             csi_amp_df.to_csv(f"{csv_path}/amp/{Util.remove_extention(file_name=filename)}.csv")
             csi_pha_df.to_csv(f"{csv_path}/pha/{Util.remove_extention(file_name=filename)}.csv")
