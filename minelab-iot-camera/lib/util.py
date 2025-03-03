@@ -95,6 +95,20 @@ class Util:
         except Exception as e:
             raise e
 
+    def get_alphabet_list(num: int) -> list:
+        """アルファベットリストを取得する関数"""
+        try:
+            alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            alphabet_list = []
+            for i in range(num):
+                if i < 26:
+                    alphabet_list.append(alphabet[i])
+                else:
+                    alphabet_list.append(alphabet[i//26-1] + alphabet[i%26])
+            return alphabet_list
+        except Exception as e:
+            raise e
+
 # 使用例
 if __name__ == "__main__":
     try:
@@ -124,5 +138,7 @@ if __name__ == "__main__":
         print("FileList: ", Util.get_file_name_list(path="/home/pi/", ext=".csv"))
         # 拡張子を外す
         print("FileName(No Ext): ", Util.remove_extention(file_name="sample.csv"))
+        # アルファベットリストを取得
+        print("Alphabet List: ", Util.get_alphabet_list(50))
     except Exception as e:
         print(e)

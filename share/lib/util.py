@@ -55,11 +55,11 @@ class Util:
             raise e
 
     @staticmethod
-    def create_path(path: Path) -> None:
+    def create_path(path: str) -> None:
         """指定パスを作成する関数"""
         try:
-            if not os.path.exists(path=path):
-                os.makedirs(os.path.dirname(path), exist_ok=True)
+            if not os.path.exists(path):
+                os.makedirs(path)
         except Exception as e:
             raise e
 
@@ -95,6 +95,20 @@ class Util:
         except Exception as e:
             raise e
 
+    def get_alphabet_list(num: int) -> list:
+        """アルファベットリストを取得する関数"""
+        try:
+            alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            alphabet_list = []
+            for i in range(num):
+                if i < 26:
+                    alphabet_list.append(alphabet[i])
+                else:
+                    alphabet_list.append(alphabet[i//26-1] + alphabet[i%26])
+            return alphabet_list
+        except Exception as e:
+            raise e
+
 # 使用例
 if __name__ == "__main__":
     try:
@@ -115,8 +129,7 @@ if __name__ == "__main__":
         encoded_data = Util.encode_base64(data)
         print("Encoded Data:", encoded_data)
         # ディレクトリを作成
-        dir_path = root_dir / "data"
-        Util.create_path(dir_path)
+        Util.create_path(path="/home/pi/minelab-agri-platform/minelab-iot-gateway/pcap/minelab-iot-nexmon-1")
         # 実行ファイル名を取得
         print("Exec FileName: ", Util.get_exec_file_name())
         # ディレクトリ名を取得
@@ -125,5 +138,7 @@ if __name__ == "__main__":
         print("FileList: ", Util.get_file_name_list(path="/home/pi/", ext=".csv"))
         # 拡張子を外す
         print("FileName(No Ext): ", Util.remove_extention(file_name="sample.csv"))
+        # アルファベットリストを取得
+        print("Alphabet List: ", Util.get_alphabet_list(50))
     except Exception as e:
         print(e)
