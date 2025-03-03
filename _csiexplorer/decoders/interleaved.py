@@ -20,10 +20,11 @@ pilots = {
 
 class SampleSet(object):
     """PCAPファイルから読み取ったデータを格納するヘルパークラス"""
-    def __init__(self, samples, bandwidth):
+    def __init__(self, samples, bandwidth, timestamps):
         self.rssi, self.fctl, self.mac, self.seq, self.css, self.csi = samples
-        self.nsamples = self.csi.shape[0]
-        self.bandwidth = bandwidth
+        self.timestamps = timestamps  # 受信時間を追加
+        self.nsamples   = self.csi.shape[0]
+        self.bandwidth  = bandwidth
 
     def get_rssi(self, index):
         """RSSIを取得"""
@@ -39,9 +40,9 @@ class SampleSet(object):
 
     def get_seq(self, index):
         """シーケンス番号とフラグメント番号を取得"""
-        sc = int.from_bytes(self.seq[index*2: (index+1)*2], byteorder='little', signed=False) # シーケンス番号
-        fn = sc % 16         # フラグメント番号
-        sc = (sc - fn) // 16 # シーケンス番号
+        sc = int.from_bytes(self.seq[index*2: (index+1)*2], byteorder='little', signed=False) 
+        fn = sc % 16         
+        sc = (sc - fn) // 16 
         return (sc, fn)
 
     def get_css(self, index):
@@ -57,86 +58,89 @@ class SampleSet(object):
             csi[pilots[self.bandwidth]] = 0
         return csi
 
+    def get_time(self, index):
+        """受信時間を取得（開始からの相対時間）"""
+        return self.timestamps[index]
+
     def print(self, index):
         """サンプルを表示"""
-        macid  = self.get_mac(index).hex() # マックアドレスを16進数文字列に変換
-        macid  = ':'.join([macid[i:i+2] for i in range(0, len(macid), 2)]) # マックアドレスをフォーマット
-        sc, fn = self.get_seq(index)       # シーケンス番号とフラグメント番号を取得
-        css    = self.get_css(index).hex() # コアと空間ストリームを16進数文字列に変換
-        rssi   = self.get_rssi(index)      # RSSIを取得
-        fctl   = self.get_fctl(index)      # FCTLを取得
-        print(f'\nSample #{index}\n---------------\nSource Mac ID: {macid}\nSequence: {sc}.{fn}\nCore and Spatial Stream: 0x{css}\nRSSI: {rssi}\nFCTL: {fctl}\n')
+        macid  = self.get_mac(index).hex()
+        macid  = ':'.join([macid[i:i+2] for i in range(0, len(macid), 2)])
+        sc, fn = self.get_seq(index)
+        css    = self.get_css(index).hex()
+        rssi   = self.get_rssi(index)
+        fctl   = self.get_fctl(index)
+        time   = self.get_time(index)
+        print(f'\nSample #{index}\n---------------\nSource Mac ID: {macid}\nSequence: {sc}.{fn}\nCore and Spatial Stream: 0x{css}\nRSSI: {rssi}\nFCTL: {fctl}\nTime: {time:.6f} sec\n')
 
 def __find_bandwidth(incl_len):
     '''帯域幅を推定する'''
-    pkt_len           = int.from_bytes(incl_len, byteorder='little', signed=False)
+    pkt_len = int.from_bytes(incl_len, byteorder='little', signed=False)
     nbytes_before_csi = 60
-    pkt_len          += (128-nbytes_before_csi)
-    bandwidth         = 20*int(pkt_len//(20*3.2*4))
+    pkt_len += (128-nbytes_before_csi)
+    bandwidth = 20*int(pkt_len//(20*3.2*4))
     return bandwidth
 
 def __find_nsamples_max(pcap_filesize, nsub):
     """最大サンプル数を決定する"""
-    nsamples_max = int((pcap_filesize-24)/(12+46+18+(nsub*4)))
-    return nsamples_max
+    return int((pcap_filesize-24)/(12+46+18+(nsub*4)))
 
 def read_pcap(pcap_filepath, bandwidth=0, nsamples_max=0):
     """PCAPファイルからサンプルを読み取る"""
-    # ファイルを読み取る
     pcap_filesize = os.stat(pcap_filepath).st_size
     with open(pcap_filepath, 'rb') as pcapfile:
         fc = pcapfile.read()
 
-    # 帯域幅と最大サンプル数を推定
     if bandwidth == 0:
         bandwidth = __find_bandwidth(fc[32:36])
-    nsub = int(bandwidth*3.2)
+    nsub = int(bandwidth * 3.2)
     if nsamples_max == 0:
         nsamples_max = __find_nsamples_max(pcap_filesize, nsub)
 
-    # メモリを事前に確保
-    rssi = bytearray(nsamples_max*1)
-    fctl = bytearray(nsamples_max*1)
-    mac  = bytearray(nsamples_max*6)
-    seq  = bytearray(nsamples_max*2)
-    css  = bytearray(nsamples_max*2)
-    csi  = bytearray(nsamples_max*nsub*4)
+    rssi = bytearray(nsamples_max * 1)
+    fctl = bytearray(nsamples_max * 1)
+    mac  = bytearray(nsamples_max * 6)
+    seq  = bytearray(nsamples_max * 2)
+    css  = bytearray(nsamples_max * 2)
+    csi  = bytearray(nsamples_max * nsub * 4)
+    timestamps = np.zeros(nsamples_max, dtype=np.float64)
 
-    # ポインタを初期化
     ptr = 24
-    # サンプル数を初期化
     nsamples = 0
+    first_timestamp = None
 
-    # フレームを読み取る
     while ptr < pcap_filesize:
-        # フレームヘッダーを読み取る
+        ts_sec  = int.from_bytes(fc[ptr:ptr+4], byteorder='little', signed=False)
+        ts_usec = int.from_bytes(fc[ptr+4:ptr+8], byteorder='little', signed=False)
+        timestamp = ts_sec + ts_usec / 1e6
+
+        if first_timestamp is None:
+            first_timestamp = timestamp
+
+        timestamps[nsamples] = timestamp - first_timestamp
+
         ptr += 8
         frame_len = int.from_bytes(fc[ptr:ptr+4], byteorder='little', signed=False)
         ptr += 50
 
-        # CSIサンプルを読み取る
-        rssi[nsamples] = fc[ptr+2]                                              # RSSI
-        fctl[nsamples] = fc[ptr+3]                                              # FCTL
-        mac[nsamples*6:(nsamples+1)*6] = fc[ptr+4:ptr+10]                       # MACアドレス
-        seq[nsamples*2:(nsamples+1)*2] = fc[ptr+10:ptr+12]                      # シーケンス番号
-        css[nsamples*2:(nsamples+1)*2] = fc[ptr+12:ptr+14]                      # コアと空間ストリーム
-        csi[nsamples*(nsub*4):(nsamples+1)*(nsub*4)] = fc[ptr+18:ptr+18+nsub*4] # CSI
+        rssi[nsamples] = fc[ptr+2]
+        fctl[nsamples] = fc[ptr+3]
+        mac[nsamples*6:(nsamples+1)*6] = fc[ptr+4:ptr+10]
+        seq[nsamples*2:(nsamples+1)*2] = fc[ptr+10:ptr+12]
+        css[nsamples*2:(nsamples+1)*2] = fc[ptr+12:ptr+14]
+        csi[nsamples*(nsub*4):(nsamples+1)*(nsub*4)] = fc[ptr+18:ptr+18+nsub*4]
 
-        # ポインタを更新
-        ptr += (frame_len-42)
-        # サンプル数を更新
+        ptr += (frame_len - 42)
         nsamples += 1
 
-    # CSIバイト列をNumpy配列に変換
-    csi_np = np.frombuffer(csi, dtype=np.int16, count = nsub*2*nsamples)
-    # 一次元配列を行列に変換
-    csi_np = csi_np.reshape((nsamples, nsub*2))
-    # 複素数に変換
-    csi_cmplx = np.fft.fftshift(csi_np[:nsamples,::2]+1.j*csi_np[:nsamples, 1::2], axes=(1,))
-    # RSSIを2の補数表現に変換
-    rssi = np.frombuffer(rssi, dtype=np.int8, count = nsamples)
-    return SampleSet((rssi, fctl, mac, seq, css, csi_cmplx,), bandwidth)
+    csi_np = np.frombuffer(csi, dtype=np.int16, count=nsub * 2 * nsamples)
+    csi_np = csi_np.reshape((nsamples, nsub * 2))
+    csi_cmplx = np.fft.fftshift(csi_np[:, ::2] + 1.j * csi_np[:, 1::2], axes=(1,))
+    rssi = np.frombuffer(rssi, dtype=np.int8, count=nsamples)
 
-# 使用例
+    return SampleSet((rssi, fctl, mac, seq, css, csi_cmplx), bandwidth, timestamps[:nsamples])
+
 if __name__ == "__main__":
     samples = read_pcap('pcap_files/_sample.pcap')
+    samples.print(0)
+    samples.print(10)
