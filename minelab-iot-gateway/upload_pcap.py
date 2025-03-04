@@ -6,9 +6,10 @@ from lib import AESCodec, Util, APIClient, ErrorHandler
 def thread_func(api_client: APIClient, project_name: str, hostname: str):
     """PCAPデータをアップロードする"""
     try:
-        for file_name in Util.get_file_name_list(path=f"{Util.get_root_dir()}/pcap/{hostname}", ext=".pcap"):
+        pcap_path = f"{Util.get_root_dir()}/pcap/{hostname}"
+        for file_name in Util.get_file_name_list(path=pcap_path, ext=".pcap"):
             # pcapファイルの読み込み
-            with open(f"{Util.get_root_dir()}/pcap/{hostname}/{file_name}", "rb") as file:
+            with open(f"{pcap_path}/{file_name}", "rb") as file:
                 pcap_data = file.read()
             # APIリクエストを送信
             _ = api_client.send_request(
