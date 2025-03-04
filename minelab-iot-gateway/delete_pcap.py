@@ -52,8 +52,8 @@ if __name__ == "__main__":
             futures = [
                 executor.submit(
                     thread_func,
-                    ssh_clients[aes_codec.decrypt(encrypted_data=hostname)],                   # SSHクライアント
-                    aes_codec.decrypt(encrypted_data=config["SSHConnect"]["REMOTE_PATH"]),     # リモートパス（削除先）
+                    ssh_clients[aes_codec.decrypt(encrypted_data=hostname)],              # SSHクライアント
+                    aes_codec.decrypt(encrypted_data=config["SSHConnect"]["REMOTE_PATH"]) # リモートパス（削除先）
                 )
                 for hostname in config["SSHConnect"]["HOSTNAME_LIST"]
             ]
