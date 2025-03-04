@@ -44,12 +44,9 @@ crontab -l 2>/dev/null | grep -v -E "update_config|exec_nexmon|get_pcap|delete_p
 echo "0 0 1 * * python3 /home/pi/minelab-agri-platform/minelab-iot-gateway/update_config.py >> /home/pi/minelab-agri-platform/minelab-iot-gateway/log/update_config.log 2>&1" >> "$TMP_CRON"
 echo "*/15 * * * * python3 /home/pi/minelab-agri-platform/minelab-iot-gateway/exec_nexmon.py >> /home/pi/minelab-agri-platform/minelab-iot-gateway/log/exec_nexmon.log 2>&1" >> "$TMP_CRON"
 echo "0 2 * * * python3 /home/pi/minelab-agri-platform/minelab-iot-gateway/get_pcap.py >> /home/pi/minelab-agri-platform/minelab-iot-gateway/log/get_pcap.log 2>&1" >> "$TMP_CRON"
-echo "0 3 * * * python3 /home/pi/minelab-agri-platform/minelab-iot-gateway/decode_pcap2csv.py >> /home/pi/minelab-agri-platform/minelab-iot-gateway/log/decode_pcap2csv.log 2>&1" >> "$TMP_CRON"
+echo "0 3 * * * python3 /home/pi/minelab-agri-platform/minelab-iot-gateway/upload_pcap.py >> /home/pi/minelab-agri-platform/minelab-iot-gateway/log/upload_pcap.log 2>&1" >> "$TMP_CRON"
 echo "0 4 * * * python3 /home/pi/minelab-agri-platform/minelab-iot-gateway/delete_pcap.py >> /home/pi/minelab-agri-platform/minelab-iot-gateway/log/cron-delete_pcap.log 2>&1" >> "$TMP_CRON"
 echo "0 4 * * * find /home/pi/minelab-agri-platform/minelab-iot-gateway/pcap -type f -name \"*.pcap\" -delete" >> "$TMP_CRON"
-echo "0 5 * * * python3 /home/pi/minelab-agri-platform/minelab-iot-gateway/preprocess_csv.py >> /home/pi/minelab-agri-platform/minelab-iot-gateway/log/preprocess_csv.log 2>&1" >> "$TMP_CRON"
-echo "0 6 * * * python3 /home/pi/minelab-agri-platform/minelab-iot-gateway/upload_csv.py >> /home/pi/minelab-agri-platform/minelab-iot-gateway/log/upload_csv.log 2>&1" >> "$TMP_CRON"
-echo "0 7 * * * find /home/pi/minelab-agri-platform/minelab-iot-gateway/csv -type f -name \"*.csv\" -delete" >> "$TMP_CRON"
 
 crontab "$TMP_CRON"
 rm "$TMP_CRON"
