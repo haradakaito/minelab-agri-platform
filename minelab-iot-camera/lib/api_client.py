@@ -72,6 +72,6 @@ class APIClient:
             # リクエストを送信
             response = requests.request(method=method, url=url, headers=headers, data=json.dumps(payload), timeout=timeout)
             response.raise_for_status() # ステータスコードが200番台以外の場合は例外を発生させる
-            return response.text
+            return response
         except Exception as e:
             raise e

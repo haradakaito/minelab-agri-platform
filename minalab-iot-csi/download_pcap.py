@@ -21,6 +21,17 @@ if __name__ == "__main__":
             endpoint   = aes_codec.decrypt(encrypted_data=config["APIGateway"]["ENDPOINT"])
         )
 
+        # APIリクエストを送信
+        response_text = api_client.send_request(
+            request_path = 'pcap', method = 'GET', timeout = 10,
+            payload = {
+                'device_name' : Util.get_device_name(),
+                'image_data'  : Util.encode_base64(data=camera.get()),
+                'project_name': aes_codec.decrypt(encrypted_data=config["ProjectName"]),
+                'timestamp'   : Util.get_timestamp()
+            }
+        )
+
     except Exception as e:
         # エラーハンドラを初期化
         handler = ErrorHandler(log_file=f'{Util.get_root_dir()}/log/{Util.get_exec_file_name()}.log')
