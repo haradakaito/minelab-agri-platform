@@ -34,7 +34,7 @@ class APIClient:
             'Content-Type' : 'application/json'
         }
 
-    def send_request(self, request_path: str, method: str, payload: str=None, timeout: int=10) -> str:
+    def send_request(self, request_path: str, method: str, params: dict=None, payload: dict=None, timeout: int=10) -> str:
         """
         APIリクエストを送信する
 
@@ -70,7 +70,7 @@ class APIClient:
             headers = self._get_headers(request=request)                                               # ヘッダーを設定
 
             # リクエストを送信
-            response = requests.request(method=method, url=url, headers=headers, data=json.dumps(payload), timeout=timeout)
+            response = requests.request(method=method, url=url, headers=headers, params=json.dumps(params), data=json.dumps(payload), timeout=timeout)
             response.raise_for_status() # ステータスコードが200番台以外の場合は例外を発生させる
             return response
         except Exception as e:
