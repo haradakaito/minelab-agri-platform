@@ -1,0 +1,14 @@
+{
+    "ProjectName": "",
+    "APIGateway": {
+        "API_KEY": "",
+        "REGION": "",
+        "SERVICE": "",
+        "BASE_PATH": "",
+        "ENDPOINT": ""
+    },
+    "IAMUser": {
+        "ACCESS_KEY": "",
+        "SECRET_KEY": ""
+    }
+}
