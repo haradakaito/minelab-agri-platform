@@ -22,10 +22,14 @@ if __name__ == "__main__":
         )
 
         # APIリクエストを送信
-        response_text = api_client.send_request(
+        response = api_client.send_request(
             request_path = 'pcap', method = 'GET', timeout = 10,
-
+            params = {
+                "project_name": aes_codec.encrypt(plain_text=config["ProjectName"]),
+                "device_name" : aes_codec.encrypt(plain_text=config["DeviceName"])
+            }
         )
+        print(response)
 
     except Exception as e:
         # エラーハンドラを初期化

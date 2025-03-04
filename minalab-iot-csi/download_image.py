@@ -21,6 +21,16 @@ if __name__ == "__main__":
             endpoint   = aes_codec.decrypt(encrypted_data=config["APIGateway"]["ENDPOINT"])
         )
 
+        # APIリクエストを送信
+        response = api_client.send_request(
+            request_path = 'image', method = 'GET', timeout = 10,
+            params = {
+                "project_name": aes_codec.encrypt(plain_text=config["ProjectName"]),
+                "device_name" : aes_codec.encrypt(plain_text=config["DeviceName"])
+            }
+        )
+        print(response)
+
     except Exception as e:
         # エラーハンドラを初期化
         handler = ErrorHandler(log_file=f'{Util.get_root_dir()}/log/{Util.get_exec_file_name()}.log')
