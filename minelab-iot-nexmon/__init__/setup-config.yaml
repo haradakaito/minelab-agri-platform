@@ -1,6 +1,2 @@
-# Cronの設定情報
-cron:
-  # pcapファイルを削除するスクリプトを定期実行する
-  delete_pcap: 0 4 * * * find /home/pi -type f -name "*.pcap" -delete
 # mcpパラメータ
 mcp_param: KuMBEQAAAQAsz2cajo4AAAAAAAAAAAAAAAAAAAAAAAAAAA==

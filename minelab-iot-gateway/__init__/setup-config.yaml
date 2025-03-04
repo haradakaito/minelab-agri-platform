@@ -8,6 +8,8 @@ cron:
   get_pcap: 0 2 * * * python3 /home/pi/minelab-agri-platform/minelab-iot-gateway/get_pcap.py >> /home/pi/minelab-agri-platform/minelab-iot-gateway/log/cron-get_pcap.log 2>&1
   # pcapを復号するスクリプトを定期実行する
   get_pcap: 0 3 * * * python3 /home/pi/minelab-agri-platform/minelab-iot-gateway/decode_pcap2csv.py >> /home/pi/minelab-agri-platform/minelab-iot-gateway/log/cron-decode_pcap2csv.log 2>&1
+  # リモートのpcapファイル削除を定期実行する
+  delete_remote_pcap: 0 4 * * * python3 /home/pi/minelab-agri-platform/minelab-iot-gateway/delete_pcap.py >> /home/pi/minelab-agri-platform/minelab-iot-gateway/log/cron-delete_pcap.log 2>&1
   # pcapファイルの削除を定期実行する
   delete_pcap: 0 4 * * * find /home/pi/minelab-agri-platform/minelab-iot-gateway/pcap -type f -name "*.pcap" -delete
   # 前処理を実行するスクリプトを定期実行する
