@@ -12,8 +12,8 @@ def thread_func(ssh_client: SSHClient, remote_path: str):
         sftp = ssh_client.open_sftp(chdir=remote_path)
         file_list = [file for file in sftp.listdir() if fnmatch(file, f"*.pcap")]
         # Pcapファイルを削除
-        for file in file_list:
-            sftp.remove(file)
+        for file_name in file_list:
+            sftp.remove(file_name)
 
         # SSH接続を切断
         sftp.close()

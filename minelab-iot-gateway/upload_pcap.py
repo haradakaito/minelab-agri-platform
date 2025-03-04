@@ -3,34 +3,27 @@ import concurrent.futures
 from lib import AESCodec, Util, APIClient, ErrorHandler
 
 # 各スレッドで実行する処理
-def thread_func(api_client: APIClient, project_name: str, dirname: str):
-    """CSVデータをアップロードする"""
+def thread_func(api_client: APIClient, project_name: str, hostname: str):
+    """PCAPデータをアップロードする"""
     try:
-        for data_type in ["amp", "pha"]:
-            for file_name in Util.get_file_name_list(path=f"{Util.get_root_dir()}/csv/{dirname}/{data_type}", ext=".csv"):
-                try:
-                    # csvファイルの読み込み
-                    with open(f"{Util.get_root_dir()}/csv/{dirname}/{data_type}/{file_name}", "rb") as file:
-                        csv_data = file.read()
-                    # APIリクエストを送信
-                    _ = api_client.send_request(
-                        request_path = 'csv', method = 'POST', timeout = 10,
-                        payload = {
-                            'device_name' : f"{str(dirname)}/{data_type}",
-                            'csv_data'    : Util.encode_base64(data=csv_data),
-                            'project_name': str(project_name),
-                            'timestamp'   : Util.remove_extention(file_name=file_name)
-                        }
-                    )
+        for file_name in Util.get_file_name_list(path=f"{Util.get_root_dir()}/pcap/{hostname}", ext=".pcap"):
+            # pcapファイルの読み込み
+            with open(f"{Util.get_root_dir()}/pcap/{hostname}/{file_name}", "rb") as file:
+                pcap_data = file.read()
+            # APIリクエストを送信
+            _ = api_client.send_request(
+                request_path = 'pcap', method = 'POST', timeout = 10,
+                payload = {
+                    'device_name' : str(hostname),
+                    'pcap_data'   : Util.encode_base64(data=pcap_data),
+                    'project_name': str(project_name),
+                    'timestamp'   : Util.remove_extention(file_name=file_name)
+                }
+            )
 
-                except Exception as e:
-                    # エラーハンドラを初期化
-                    handler = ErrorHandler(log_file=f'{Util.get_root_dir()}/log/{Util.get_exec_file_name()}-{dirname}.log')
-                    handler.log_error(e)
-                    continue
     except Exception as e:
         # エラーハンドラを初期化
-        handler = ErrorHandler(log_file=f'{Util.get_root_dir()}/log/{Util.get_exec_file_name()}-{dirname}.log')
+        handler = ErrorHandler(log_file=f'{Util.get_root_dir()}/log/{Util.get_exec_file_name()}.log')
         handler.handle_error(e)
 
 if __name__ == "__main__":
@@ -60,9 +53,9 @@ if __name__ == "__main__":
                     thread_func,
                     api_client,
                     aes_codec.decrypt(encrypted_data=config["ProjectName"]),
-                    dirname
+                    aes_codec.decrypt(encrypted_data=hostname)
                 )
-                for dirname in Util.get_dir_list(path=f"{Util.get_root_dir()}/csv")
+                for hostname in config["SSHConnect"]["HOSTNAME_LIST"]
             ]
             # すべてのスレッドの完了を待つ
             concurrent.futures.wait(futures)
