@@ -1,4 +1,0 @@
-# Cronの設定情報
-cron:
-  # 設定ファイルを更新するスクリプトを定期実行する
-  update_config: 0 0 1 * * python3 /home/pi/minelab-agri-platform/minelab-iot-csi/update_config.py >> /home/pi/minelab-agri-platform/minelab-iot-csi/log/cron-update_config.log 2>&1
