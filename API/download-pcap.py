@@ -10,11 +10,11 @@ BUCKET_NAME = os.environ['BUCKET_NAME']
 def _is_valid_params(params: dict) -> bool:
     try:
         # 必須キーの存在確認
-        required_keys = ['device_name', 'project_name', 'year', 'month', 'day']
+        required_keys = ['device_name', 'project_name', 'year', 'month', 'day', 'hour', 'minute']
         if not all(key in params for key in required_keys):
             return False
 
-        # 型チェック
+        # 型チェック（すべての値が文字列であること）
         return all(isinstance(params[key], str) for key in required_keys)
 
     except (KeyError, TypeError):
@@ -39,9 +39,11 @@ def lambda_handler(event, context):
         year         = params['year']
         month        = params['month']
         day          = params['day']
+        hour         = params['hour']
+        minute       = params['minute']
 
         # 取得対象のプレフィックス（S3の仮想フォルダ）
-        prefix = f'projects/{project_name}/pcap-data/{device_name}/year={year}/month={month}/day={day}/'
+        prefix = f'projects/{project_name}/pcap-data/{device_name}/year={year}/month={month}/day={day}/hour={hour}/minute={minute}/'
 
         # S3の対象フォルダ内の全オブジェクトをリストアップ
         response = s3.list_objects_v2(Bucket=BUCKET_NAME, Prefix=prefix)

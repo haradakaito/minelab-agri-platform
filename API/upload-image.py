@@ -30,8 +30,11 @@ def _create_save_path(project_name: str, device_name: str, timestamp: str):
     year      = timestamp.split('T')[0].split('-')[0]
     month     = timestamp.split('T')[0].split('-')[1]
     day       = timestamp.split('T')[0].split('-')[2]
-    file_name = timestamp.split('T')[0].replace('-', '') + timestamp.split('T')[1].replace('-', '') + '.jpg'
-    return f'projects/{project_name}/image-data/{device_name}/year={year}/month={month}/day={day}/{file_name}'
+    hour      = timestamp.split('T')[1].split('-')[0]
+    minute    = timestamp.split('T')[1].split('-')[1]
+    # file_name = timestamp.split('T')[0].replace('-', '') + timestamp.split('T')[1].replace('-', '') + '.jpg'
+    file_name = f'{timestamp}.jpg'
+    return f'projects/{project_name}/image-data/{device_name}/year={year}/month={month}/day={day}/hour={hour}/minute={minute}/{file_name}'
 
 def lambda_handler(event, context):
     try:

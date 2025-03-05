@@ -26,7 +26,12 @@ if __name__ == "__main__":
             request_path = 'image', method = 'GET', timeout = 10,
             params = {
                 "project_name": aes_codec.encrypt(plain_text=config["ProjectName"]),
-                "device_name" : aes_codec.encrypt(plain_text=config["DeviceName"])
+                "device_name" : aes_codec.encrypt(plain_text=config["DeviceName"]),
+                "year"        : aes_codec.encrypt(plain_text=config["Year"]),
+                "month"       : aes_codec.encrypt(plain_text=config["Month"]),
+                "day"         : aes_codec.encrypt(plain_text=config["Day"]),
+                "hour"        : aes_codec.encrypt(plain_text=config["Hour"]),
+                "minute"      : aes_codec.encrypt(plain_text=config["Minute"])
             }
         )
         print(response)
