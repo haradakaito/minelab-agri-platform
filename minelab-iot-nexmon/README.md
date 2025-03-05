@@ -6,9 +6,9 @@
 
 ```
 $ cd ~
-$ sudo mkdir .ssh
-$ sudo touch ./.ssh/authorized_keys
-$ sudo nano ./.ssh/authorized_keys
+$ mkdir .ssh
+$ touch ./.ssh/authorized_keys
+$ nano ./.ssh/authorized_keys
 
 # 任意の公開鍵（.pub）を追記
 
@@ -34,7 +34,7 @@ $ sudo reboot
 ```
 $ cd ~
 $ git clone https://github.com/haradakaito/minelab-agri-platform.git
-$ cd minelab-agri-platform/minelab-iot-nexmon/__init__
+$ cd ~/minelab-agri-platform/minelab-iot-nexmon/__init__
 $ chmod +x setup.sh
 $ bash setup.sh
 $ sudo reboot
