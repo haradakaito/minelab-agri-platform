@@ -41,7 +41,7 @@ class SampleSet(object):
 
     def get_seq(self, index):
         """シーケンス番号とフラグメント番号を取得"""
-        sc = int.from_bytes(self.seq[index*2: (index+1)*2], byteorder='little', signed=False) 
+        sc = int.from_bytes(self.seq[index*2: (index+1)*2], byteorder='little', signed=False)
         fn = sc % 16
         sc = (sc - fn) // 16
         return (sc, fn)
