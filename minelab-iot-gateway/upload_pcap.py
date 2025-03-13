@@ -18,7 +18,7 @@ def thread_func(api_client: APIClient, project_name: str, hostname: str):
                     'device_name' : str(hostname),
                     'pcap_data'   : Util.encode_base64(data=pcap_data),
                     'project_name': str(project_name),
-                    'timestamp'   : Util.remove_extention(file_name=file_name)
+                    'timestamp'   : Util.remove_extension(file_name=file_name)
                 }
             )
 

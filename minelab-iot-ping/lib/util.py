@@ -88,7 +88,7 @@ class Util:
             raise e
 
     @staticmethod
-    def remove_extention(file_name: str) -> str:
+    def remove_extension(file_name: str) -> str:
         """指定したファイル名の拡張子を外す"""
         try:
             return os.path.splitext(file_name)[0]
@@ -137,7 +137,7 @@ if __name__ == "__main__":
         # ファイル名を取得
         print("FileList: ", Util.get_file_name_list(path="/home/pi/", ext=".csv"))
         # 拡張子を外す
-        print("FileName(No Ext): ", Util.remove_extention(file_name="sample.csv"))
+        print("FileName(No Ext): ", Util.remove_extension(file_name="sample.csv"))
         # アルファベットリストを取得
         print("Alphabet List: ", Util.get_alphabet_list(50))
     except Exception as e:
