@@ -29,17 +29,6 @@ static domain_name_servers=192.168.25.1
 $ sudo reboot
 ```
 
-## 初期設定用シェルスクリプトの実行
-
-```
-$ cd ~
-$ git clone https://github.com/haradakaito/minelab-agri-platform.git
-$ cd ~/minelab-agri-platform/minelab-iot-nexmon/__init__
-$ chmod +x setup.sh
-$ bash setup.sh
-$ sudo reboot
-```
-
 ## Nexmonのインストール
 
 - 【Raspberry Pi】Nexmon環境構築手順：https://qiita.com/haradakaito/items/8e9ef1081b372509d4a1
