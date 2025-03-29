@@ -70,7 +70,10 @@ class APIClient:
             headers = self._get_headers(request=request)                                               # ヘッダーを設定
 
             # リクエストを送信
-            response = requests.request(method=method, url=url, headers=headers, params=json.dumps(params), data=json.dumps(payload), timeout=timeout)
+            if method == "POST":
+                response = requests.request(method=method, url=url, headers=headers, data=json.dumps(payload), timeout=timeout)
+            else:
+                response = requests.request(method=method, url=url, headers=headers, params=json.dumps(params), data=json.dumps(payload), timeout=timeout)
             response.raise_for_status() # ステータスコードが200番台以外の場合は例外を発生させる
             return response
         except Exception as e:

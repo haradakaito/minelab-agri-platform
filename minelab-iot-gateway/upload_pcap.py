@@ -5,12 +5,13 @@ from lib import AESCodec, Util, APIClient, ErrorHandler
 # 各スレッドで実行する処理
 def thread_func(api_client: APIClient, project_name: str, hostname: str):
     """PCAPデータをアップロードする"""
-    try:
-        pcap_path = f"{Util.get_root_dir()}/pcap/{hostname}"
-        for file_name in Util.get_file_name_list(path=pcap_path, ext=".pcap"):
+    pcap_path = f"{Util.get_root_dir()}/pcap/{hostname}"
+    for file_name in Util.get_file_name_list(path=pcap_path, ext=".pcap"):
+        try:
             # pcapファイルの読み込み
             with open(f"{pcap_path}/{file_name}", "rb") as file:
                 pcap_data = file.read()
+
             # APIリクエストを送信
             _ = api_client.send_request(
                 request_path = 'pcap', method = 'POST', timeout = 10,
@@ -22,10 +23,10 @@ def thread_func(api_client: APIClient, project_name: str, hostname: str):
                 }
             )
 
-    except Exception as e:
-        # エラーハンドラを初期化
-        handler = ErrorHandler(log_file=f'{Util.get_root_dir()}/log/{Util.get_exec_file_name()}.log')
-        handler.handle_error(e)
+        except Exception as e:
+            # エラーハンドラを初期化
+            handler = ErrorHandler(log_file=f'{Util.get_root_dir()}/log/{Util.get_exec_file_name()}.log')
+            handler.log_error(e)
 
 if __name__ == "__main__":
     try:
